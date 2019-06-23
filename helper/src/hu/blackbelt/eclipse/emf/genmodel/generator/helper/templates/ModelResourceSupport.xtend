@@ -20,6 +20,7 @@ class ModelResourceSupport implements IGenerator {
 	'''
 		package «packageName».support;
 
+		import org.eclipse.emf.common.notify.Notifier;
 		import org.eclipse.emf.common.util.EList;
 		import org.eclipse.emf.common.util.URI;
 		import org.eclipse.emf.ecore.resource.ContentHandler;
@@ -65,6 +66,20 @@ class ModelResourceSupport implements IGenerator {
 			public <T> Stream<T> all() {
 			    return asStream((Iterator<T>) resourceSet.getAllContents(), false);
 			}
+			
+			public <T> Stream<T> getStreamOf(final Class<T> clazz) {
+			    final Iterable<Notifier> contents = resourceSet::getAllContents;
+			    return StreamSupport.stream(contents.spliterator(), false)
+			            .filter(e -> clazz.isAssignableFrom(e.getClass())).map(e -> (T) e);
+			}
+			
+			«FOR g : allGenPackagesWithConcreteClasses»
+				«FOR s : g.genClasses»
+					public Stream<«s.genPackage.packageFqName».«s.name»> getStreamOf«s.genPackage.packageJavaName»«s.name»() {
+						return getStreamOf(«s.genPackage.packageFqName».«s.name».class);
+					}
+				«ENDFOR»
+			«ENDFOR»
 			
 			public static void setupRelativeUriRoot(ResourceSet resourceSet, URI rootUri) {
 			    EList<URIHandler> uriHandlers = resourceSet.getURIConverter().getURIHandlers();

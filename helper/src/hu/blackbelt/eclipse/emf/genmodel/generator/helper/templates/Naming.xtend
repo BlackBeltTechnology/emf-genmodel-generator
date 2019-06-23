@@ -21,6 +21,21 @@ class Naming {
 		packageFqName.replace('.','/')
 	}	
 
+	def packageJavaName (GenPackage it) {
+		var name = "";
+		var p = it;
+		while (p !== null) {
+			name = p.getEcorePackage.name.capitalize + name
+			if (p.eContainer instanceof GenPackage) {
+				p = p.eContainer as GenPackage;			
+			} else {
+				p = null;
+			}
+		}
+		return name;
+		//spackageFqName.replace('.','__')
+	}	
+
 	def decapitalize (String string) {
 	    if (string === null || string.length() == 0) {
 	        return string;
