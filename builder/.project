@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>hu.blackbelt.eclipse.emf.genmodel.generator.core</name>
+	<name>hu.blackbelt.eclipse.emf.genmodel.generator.builder</name>
 	<comment></comment>
 	<projects>
 	</projects>

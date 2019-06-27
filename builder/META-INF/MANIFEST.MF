@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: hu.blackbelt.eclipse.emf.genmodel.generator.helper
+Bundle-SymbolicName: hu.blackbelt.eclipse.emf.genmodel.generator.builder
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: hu.blackbelt.eclipse.emf.genmodel.generator.helper,
- hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine,
- hu.blackbelt.eclipse.emf.genmodel.generator.helper.templates
+Export-Package: hu.blackbelt.eclipse.emf.genmodel.generator.builder,
+ hu.blackbelt.eclipse.emf.genmodel.generator.builder.engine,
+ hu.blackbelt.eclipse.emf.genmodel.generator.builder.templates
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.emf.codegen.ecore,
  org.eclipse.emf.mwe.core,
@@ -18,4 +18,4 @@ Require-Bundle: org.eclipse.emf.codegen.ecore,
  org.eclipse.xtext,
  org.apache.commons.logging,
  hu.blackbelt.eclipse.emf.genmodel.generator.core
-Automatic-Module-Name: hu.blackbelt.eclipse.emf.genmodel.generator.helper
+Automatic-Module-Name: hu.blackbelt.eclipse.emf.genmodel.generator.builder

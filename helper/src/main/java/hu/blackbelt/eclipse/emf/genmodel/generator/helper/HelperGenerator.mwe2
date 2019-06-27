@@ -1,0 +1,29 @@
+module hu.blackbelt.eclipse.emf.genmodel.generator.helper.HelperGenerator
+
+var modelDir = "model"
+var javaGenPath = "src-gen"
+
+Workflow {	
+	bean = engine.ModelHelperGeneratorStandaloneSetup : genModelHelperSetup {
+			config = {
+				javaGenPath = javaGenPath
+			}
+			doInit = true
+		}
+	
+	component = org.eclipse.xtext.mwe.Reader {
+		path = modelDir
+		register = genModelHelperSetup
+		loadResource = {
+			slot = "modelHelper"
+		}
+	}
+	
+	component = org.eclipse.xtext.generator.GeneratorComponent {
+		register = genModelHelperSetup
+        slot = 'modelHelper'
+        outlet = {
+            path = javaGenPath
+        }
+    }	   
+}

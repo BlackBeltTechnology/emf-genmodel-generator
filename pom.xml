@@ -203,8 +203,8 @@
                     <artifactId>tycho-compiler-plugin</artifactId>
                     <version>${tycho-version}</version>
                     <configuration>
-                        <source>1.6</source>
-                        <target>1.6</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
@@ -298,6 +298,11 @@
                     <dependency>
                         <groupId>hu.blackbelt.eclipse</groupId>
                         <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator.helper</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>hu.blackbelt.eclipse</groupId>
+                        <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator.builder</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                     <dependency>
@@ -460,21 +465,6 @@
                         <artifactId>org.eclipse.emf.ecore.xcore.lib</artifactId>
                         <version>${ecore-xcore-lib-version}</version>
                     </dependency>
-					<dependency>
-					    <groupId>org.eclipse.xpand</groupId>
-					    <artifactId>org.eclipse.xtend.typesystem.emf</artifactId>
-					    <version>${xpand-version}</version>
-					</dependency>
-					<dependency>
-					    <groupId>org.eclipse.xpand</groupId>
-					    <artifactId>org.eclipse.xpand</artifactId>
-					    <version>${xpand-version}</version>
-					</dependency>
-					<dependency>
-					    <groupId>org.eclipse.xpand</groupId>
-					    <artifactId>org.eclipse.xtend</artifactId>
-					    <version>${xpand-version}</version>
-					</dependency>
                 </dependencies>
             </plugin>
 
@@ -511,7 +501,9 @@
 		    <modules>
 		        <module>core</module>
 		        <module>helper</module>
-		        <module>feature</module>
+                <module>builder</module>
+                <module>ecore</module>
+                <module>feature</module>
 		        <module>site</module>
 		    </modules>
         </profile>

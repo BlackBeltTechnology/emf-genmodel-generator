@@ -1,0 +1,30 @@
+module org.eclipse.emf.ecore.util.EcoreGenerator
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.emf.mwe2.ecore.*
+
+var rootPath = "."
+var modelDir = "model"
+var javaGenPath = "src-genmodel"
+
+Workflow {
+
+	// Clean generated sources
+	component = DirectoryCleaner {
+		directory = "${rootPath}/${javaGenPath}"
+	}
+
+	// Helper for model
+	component = hu.blackbelt.eclipse.emf.genmodel.generator.helper.HelperGeneratorWorkflow {
+		modelDir = "${rootPath}/${modelDir}"      
+		javaGenPath = "${javaGenPath}"
+	}
+
+	// Builder for model
+	component = hu.blackbelt.eclipse.emf.genmodel.generator.builder.BuilderGeneratorWorkflow {
+		modelDir = "${rootPath}/${modelDir}"
+		javaGenPath = "${javaGenPath}"
+	}	
+
+}
+

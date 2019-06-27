@@ -11,3 +11,4 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.emf.codegen.ecore,
  org.eclipse.emf.mwe2.launch,
  org.eclipse.xtend.core
+Automatic-Module-Name: hu.blackbelt.eclipse.emf.genmodel.generator.core
