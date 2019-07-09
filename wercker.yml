@@ -8,14 +8,14 @@ build:
       secretkeys: $GPG_SECRET_KEYS 
       ownertrust: $GPG_OWNERTRUST
 
-    - blackbelttechnology/version-from-git-tag@1.0.5
+    - blackbelttechnology/version-from-git-tag@1.0.7
  
     - blackbelttechnology/version-from-pom@1.0.2:
       pom: ./pom.xml
       
     - wercker/maven:
       goals: versions:set
-      maven_opts: -DnewVersion=${VERSION_FROM_POM_BASE_VERSION}.${VERSION_FROM_GIT_TAG_CURRENT_BRANCH_VALID_NAME}_${VERSION_FROM_GIT_TAG_COMMIT_COUNT}
+      maven_opts: -DnewVersion=${VERSION_FROM_POM_BASE_VERSION}.${VERSION_FROM_GIT_TAG_CURRENT_BRANCH_VALID_NAME}_${VERSION_FROM_GIT_TAG_FOR_GITFLOW}
       settings: .maven.xml
       cache_repo: true
 
@@ -80,7 +80,7 @@ release:
              git config --global user.email "oss@blackbelt.hu"
              git config --global user.name "Wercker Release"
     
-    - blackbelttechnology/version-from-git-tag@1.0.5
+    - blackbelttechnology/version-from-git-tag@1.0.7
 
     - script:
       name: reset git state to actual commit
