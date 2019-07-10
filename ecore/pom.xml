@@ -63,7 +63,7 @@
                             <!-- This should be in sync with xtext-maven-plugin//source-roots,
                              except for /model directory -->
                             <sources>
-                                <source>${basedir}/src-genmodel</source>
+                                <source>${basedir}/src-gen</source>
                             </sources>
                         </configuration>
                     </execution>

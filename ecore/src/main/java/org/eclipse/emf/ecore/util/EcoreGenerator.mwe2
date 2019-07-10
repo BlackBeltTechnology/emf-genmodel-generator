@@ -5,7 +5,7 @@ import org.eclipse.emf.mwe2.ecore.*
 
 var rootPath = "."
 var modelDir = "model"
-var javaGenPath = "src-genmodel"
+var javaGenPath = "src-gen"
 
 Workflow {
 
@@ -17,13 +17,13 @@ Workflow {
 	// Helper for model
 	component = hu.blackbelt.eclipse.emf.genmodel.generator.helper.HelperGeneratorWorkflow {
 		modelDir = "${rootPath}/${modelDir}"      
-		javaGenPath = "${javaGenPath}"
+		javaGenPath = "${rootPath}/${javaGenPath}"
 	}
 
 	// Builder for model
 	component = hu.blackbelt.eclipse.emf.genmodel.generator.builder.BuilderGeneratorWorkflow {
 		modelDir = "${rootPath}/${modelDir}"
-		javaGenPath = "${javaGenPath}"
+		javaGenPath = "${rootPath}/${javaGenPath}"
 	}	
 
 }
