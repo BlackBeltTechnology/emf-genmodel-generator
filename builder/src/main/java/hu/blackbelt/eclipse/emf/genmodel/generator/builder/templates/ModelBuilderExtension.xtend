@@ -166,7 +166,6 @@ class ModelBuilderExtension {
 	}
 
     def isBuilderType(GenFeature it) {
-    	System.out.println("N: " + formattedName + " - " + typeGenClass?.name + " - " + typeGenClassifier?.name + " - " + (typeGenClassifier.ecoreClassifier instanceof EClass))
 	    typeGenClassifier.isBuilderType
     }
 
