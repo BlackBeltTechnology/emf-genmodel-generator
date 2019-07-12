@@ -155,7 +155,7 @@ class ModelBuilderBuilder {
 		'''
 
 	def declarationMulti(GenFeature it) '''
-		private java.util.Collection<«typeDeclaration»> m_«safeName()»;
+		private java.util.Collection<«typeDeclaration»> m_«safeName()» = new java.util.LinkedList<«typeDeclaration»>();
 		«IF isBuilderType»
 			private java.util.Collection<«typeGenClassifier.builderInterfaceFqName»<? extends «typeGenClassifier.modelJavaFqName»>> m_feature«safeName().toFirstUpper()»Builder = new java.util.LinkedList<«typeGenClassifier.builderInterfaceFqName»<? extends «typeGenClassifier.modelJavaFqName»>>();   
 		«ENDIF»
