@@ -22,8 +22,6 @@ class ModelBuilderBuilder {
 	@Inject 
 	BuilderConfig builderConfig;
 
-//	String featureModifierMethodPrefix = "with"
-	
 	def doGenerate(GenClass genClass, Resource input, IFileSystemAccess fsa) {		
 	    val builder = genClass.generateBuilder
 	    this.resource = input;
@@ -36,12 +34,12 @@ class ModelBuilderBuilder {
 		
 		/**
 		  * <!-- begin-user-doc --> 
-		  *   A builder for the model object ' <em><b>«modelJava»</b></em>'.
+		  *   A builder for the model object ' <em><b>«modelJavaFqName»</b></em>'.
 		  * <!-- end-user-doc -->
 		  * 
 		  * @generated
 		  */
-		public class «builderBuilderName()» implements «genPackage.builderInterfaceName»<«modelJava»> {
+		public class «builderBuilderName()» implements «genPackage.builderInterfaceName»<«modelJavaFqName»> {
 		 
 		    // features and builders
 		 	«FOR unary : unaryStructuralFeatures»
@@ -69,11 +67,11 @@ class ModelBuilderBuilder {
 		  	}
 		
 		    /**
-		     * This method constructs the final «modelJava» type.
-		     * @return new instance of the «modelJava» type
+		     * This method constructs the final «modelJavaFqName» type.
+		     * @return new instance of the «modelJavaFqName» type
 		     */
-		    public «modelJava» build() {
-		    	final «modelJava» _newInstance = «genPackage.packageFqName».«factoryInstance()».create«name.toFirstUpper()»();
+		    public «modelJavaFqName» build() {
+		    	final «modelJavaFqName» _newInstance = «factoryInstanceFqName()».create«name.toFirstUpper()»();
 			 	«FOR unary : unaryStructuralFeatures»
 			 		«unary.assignFeature("_newInstance")»
 			 	«ENDFOR»		
@@ -120,7 +118,7 @@ class ModelBuilderBuilder {
 		if (ecoreClassifier.instanceClassName !== null) {
 			ecoreClassifier.typeWithGeneric
 		} else {
-			modelJava
+			modelJavaFqName
 		}
 	}
 
@@ -151,15 +149,15 @@ class ModelBuilderBuilder {
 
 	def declaration(GenFeature it) '''
 		private «typeDeclaration» m_«safeName()»;
-		«IF effectiveType.isBuilderType»
-			private «effectiveType.genPackage.builderInterfaceName»<? extends «effectiveType.modelJava»> m_feature«safeName().toFirstUpper()»Builder;   
+		«IF isBuilderType»
+			private «typeGenClassifier.builderInterfaceFqName»<? extends «typeGenClassifier.modelJavaFqName»> m_feature«safeName().toFirstUpper()»Builder;   
 		«ENDIF»
 		'''
 
 	def declarationMulti(GenFeature it) '''
 		private java.util.Collection<«typeDeclaration»> m_«safeName()»;
-		«IF effectiveType.isBuilderType»
-			private java.util.Collection<«effectiveType.genPackage.builderInterfaceName»<? extends «effectiveType.modelJava»>> m_feature«safeName().toFirstUpper()»Builder = new java.util.LinkedList<«effectiveType.genPackage.builderInterfaceName»<? extends «effectiveType.modelJava»>>();   
+		«IF isBuilderType»
+			private java.util.Collection<«typeGenClassifier.builderInterfaceFqName»<? extends «typeGenClassifier.modelJavaFqName»>> m_feature«safeName().toFirstUpper()»Builder = new java.util.LinkedList<«typeGenClassifier.builderInterfaceFqName»<? extends «typeGenClassifier.modelJavaFqName»>>();   
 		«ENDIF»
 		'''
 
@@ -169,7 +167,8 @@ class ModelBuilderBuilder {
 
 	def assignBuilderFeatures(GenFeature it, String p_var) '''
 		«p_var».m_feature«safeName.toFirstUpper»Set = m_feature«safeName.toFirstUpper»Set;
-		«IF effectiveType.isBuilderType()»
+		«p_var».m_«safeName» = m_«safeName»;		
+		«IF isBuilderType()»
 			«p_var».m_feature«safeName().toFirstUpper()»Builder = m_feature«safeName().toFirstUpper()»Builder;
 	    «ENDIF»
    		'''
@@ -178,7 +177,7 @@ class ModelBuilderBuilder {
 	def assignFeature(GenFeature it, String p_var) '''
 		if (m_feature«safeName().toFirstUpper()»Set) {
 			«p_var».set«safeSetterName().toFirstUpper()»(m_«safeName()»);
-		«IF effectiveType.isBuilderType()»
+		«IF isBuilderType()»
 			} else {
 					if (m_feature«safeName().toFirstUpper()»Builder != null) {
 						«p_var».set«safeSetterName().toFirstUpper()»(m_feature«safeName().toFirstUpper()»Builder.build());
@@ -192,10 +191,10 @@ class ModelBuilderBuilder {
 	def assignFeatureMulti(GenFeature it, String p_var) '''
 		if(m_feature«safeName().toFirstUpper()»Set) {
 			«p_var».get«potentiallyPluralizedName().toFirstUpper()»().addAll(m_«safeName()»);
-		«IF effectiveType.isBuilderType()»
+		«IF isBuilderType()»
 			} else {
 				if (!m_feature«safeName().toFirstUpper()»Builder.isEmpty()) {
-					for («genPackage.builderInterfaceName»<? extends «effectiveType.modelJava()»> builder: m_feature«safeName().toFirstUpper()»Builder) {
+					for («typeGenClassifier.builderInterfaceFqName»<? extends «typeGenClassifier.modelJavaFqName()»> builder: m_feature«safeName().toFirstUpper()»Builder) {
 						«p_var».get«potentiallyPluralizedName().toFirstUpper()»().add(builder.build());
 					}
 				}
@@ -219,8 +218,8 @@ class ModelBuilderBuilder {
 			m_feature«safeName().toFirstUpper()»Set = true;
 			return this;
 		}
-		«IF it.typeGenClassifier.isBuilderType()»
-			public «p_context.builderBuilderName()» «featureAccessMethod()»(«effectiveType.genPackage.builderInterfaceName»<? extends «effectiveType.modelJava»> p_«p_context.builderBuilderName.toFirstLower()»){
+		«IF isBuilderType()»
+			public «p_context.builderBuilderName()» «featureAccessMethod()»(«typeGenClassifier.builderInterfaceFqName»<? extends «typeGenClassifier.modelJavaFqName»> p_«p_context.builderBuilderName.toFirstLower()»){
 				m_feature«safeName().toFirstUpper()»Builder = p_«p_context.builderBuilderName().toFirstLower()»;
 				return this;
 			} 
@@ -240,145 +239,11 @@ class ModelBuilderBuilder {
 			return this;
 		}
 
-		«IF it.typeGenClassifier.isBuilderType()»
-			public «p_context.builderBuilderName()» «featureAccessMethod()»(«effectiveType.genPackage.builderInterfaceName»<? extends «effectiveType.modelJava»> p_«p_context.builderBuilderName.toFirstLower()»){
+		«IF isBuilderType()»
+			public «p_context.builderBuilderName()» «featureAccessMethod()»(«typeGenClassifier.builderInterfaceFqName»<? extends «typeGenClassifier.modelJavaFqName»> p_«p_context.builderBuilderName.toFirstLower()»){
 				m_feature«safeName().toFirstUpper()»Builder.add(p_«p_context.builderBuilderName().toFirstLower()»);
 				return this;
 			} 
 		«ENDIF» 
 		'''
 }
-
-//«DEFINE builderImplementation FOR EClass»
-//  «IF isNonAbstractBuilderType()»
-//    «FILE fqBuilderFile()»
-//      package «fqBuilderJavaPackage()»;
-//      
-//      /**
-//       * <!-- begin-user-doc --> 
-//       *   A builder for the model object ' <em><b>«fqGenJava()»</b></em>'.
-//       * <!-- end-user-doc -->
-//       * 
-//       * @generated
-//       */
-//      public class «builderName()» implements «ePackage.fqInterfaceJava()»<«fqGenJava()»> {
-//      
-//        // features and builders
-//        «EXPAND declaration FOREACH unaryStructuralFeatures()»
-//        «EXPAND declarationMulti FOREACH multipleStructuralFeatures()»
-//        
-//        // helper attributes
-//        «EXPAND assignmentHelperDeclaration FOREACH structuralFeatures()»        
-//      
-//        /**
-//         * Builder is not instantiated with a constructor.
-//         * @see #new«builderName()»()
-//         */ 
-//        private «builderName()»() {
-//        }
-//        
-//        /**
-//         * This method creates a new instance of the «builderName()».
-//         * @return new instance of the «builderName()»
-//         */
-//        public static «builderName()» create() {
-//          return new «builderName()»();
-//        }
-//        
-//        /**
-//         * This method can be used to override attributes of the builder. It constructs a new builder and copies the current values to it.
-//         */
-//        public «builderName()» but() {
-//          «LET "_builder" AS var»
-//            «builderName()» «var» = create();        
-//            «EXPAND assignBuilderFeatures(var) FOREACH structuralFeatures()»           
-//            return «var»;
-//          «ENDLET»            
-//        }
-//        
-//        /**
-//         * This method constructs the final «fqGenJava()» type.
-//         * @return new instance of the «fqGenJava()» type
-//         */
-//        public «fqGenJava()» build() {
-//          «LET "_newInstance" AS var»
-//            final «fqGenJava()» «var» = «fqGenJavaPackage()».«factoryInstance()».create«name.toFirstUpper()»();            
-//            «EXPAND assignFeatures(var) FOREACH unaryStructuralFeatures()»
-//            «EXPAND assignFeaturesMulti(var) FOREACH multipleStructuralFeatures()»            
-//            return «var»;
-//          «ENDLET»
-//        }    
-//        
-//        «EXPAND method(this) FOREACH unaryStructuralFeatures()»
-//        «EXPAND methodMulti(this) FOREACH multipleStructuralFeatures()»
-//      }
-//    «ENDFILE»
-//  «ENDIF»
-//«ENDDEFINE»
-//
-//
-//«DEFINE assignFeatures(String p_var) FOR EStructuralFeature»
-//  if(m_feature«safeName().toFirstUpper()»Set) {
-//    «p_var».set«safeSetterName().toFirstUpper()»(m_«safeName()»);     
-//  «IF eType.isBuilderType()»
-//  } else {
-//    if (m_feature«safeName().toFirstUpper()»Builder != null) {
-//      «p_var».set«safeSetterName().toFirstUpper()»(m_feature«safeName().toFirstUpper()»Builder.build());
-//    }    
-//  }
-//  «ELSE»
-//  }
-//  «ENDIF»
-//«ENDDEFINE»
-//
-//«DEFINE assignFeaturesMulti(String p_var) FOR EStructuralFeature»
-//  if(m_feature«safeName().toFirstUpper()»Set) {    
-//    «p_var».get«potentiallyPluralizedName().toFirstUpper()»().addAll(m_«safeName()»);        
-//  «IF eType.isBuilderType()»
-//  } else {
-//    if (!m_feature«safeName().toFirstUpper()»Builder.isEmpty()) {
-//      for («eType.ePackage.fqInterfaceJava()»<? extends «eType.fqGenJava()»> builder: m_feature«safeName().toFirstUpper()»Builder) {
-//         «p_var».get«potentiallyPluralizedName().toFirstUpper()»().add(builder.build());          
-//      }
-//    } 
-//  }
-//  «ELSE»
-//  }
-//  «ENDIF»
-//«ENDDEFINE»
-//
-//«DEFINE method(EClass p_context) FOR EStructuralFeature»  
-//  public «p_context.builderName()» «featureAccessMethod()»(«EXPAND typeDeclaration FOR eType» p_«safeName()»){
-//    m_«safeName()» = p_«safeName()»;
-//    m_feature«safeName().toFirstUpper()»Set = true;
-//    return this;
-//  }
-//
-//  «IF eType.isBuilderType()»
-//    public «p_context.builderName()» «featureAccessMethod()»(«eType.ePackage.fqInterfaceJava()»<? extends «eType.fqGenJava()»> p_«eType.builderName().toFirstLower()»){
-//      m_feature«safeName().toFirstUpper()»Builder = p_«eType.builderName().toFirstLower()»;
-//      return this;
-//    }
-//  «ENDIF»  
-//«ENDDEFINE»
-//
-//«DEFINE methodMulti(EClass p_context) FOR EStructuralFeature» 
-//  public «p_context.builderName()» «featureAccessMethod()»(«EXPAND typeDeclaration FOR eType» p_«safeName()»){
-//    m_«safeName()».add(p_«safeName()»);
-//    m_feature«safeName().toFirstUpper()»Set = true;
-//    return this;
-//  }    
-//
-//  public «p_context.builderName()» «featureAccessMethod()»(java.util.Collection<? extends «EXPAND typeDeclaration FOR eType»> p_«safeName()»){
-//    m_«safeName()».addAll(p_«safeName()»);
-//    m_feature«safeName().toFirstUpper()»Set = true;
-//    return this;
-//  }
-//
-//  «IF eType.isBuilderType()»
-//    public «p_context.builderName()» «featureAccessMethod()»(«eType.ePackage.fqInterfaceJava()»<? extends «eType.fqGenJava()»> p_«eType.builderName().toFirstLower()»){
-//      m_feature«safeName().toFirstUpper()»Builder.add(p_«eType.builderName().toFirstLower()»);
-//      return this;
-//    }            
-//  «ENDIF»  
-//«ENDDEFINE»

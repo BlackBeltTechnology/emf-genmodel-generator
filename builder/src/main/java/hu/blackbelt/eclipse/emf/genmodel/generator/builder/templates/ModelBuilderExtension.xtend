@@ -7,6 +7,8 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenFeature
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.codegen.util.CodeGenUtil
+import org.eclipse.emf.ecore.EClassifier
+import org.eclipse.emf.ecore.EClass
 
 class ModelBuilderExtension {
 			
@@ -80,7 +82,7 @@ class ModelBuilderExtension {
  	}
 
     // extensions for the already generated java classes of an Ecore metamodel
-    def modelJava(GenClassifier it) { 
+    def modelJavaFqName(GenClassifier it) { 
     	genPackage.packageFqName + "." + ecoreClassifier.name.toJavaRef;	
 	}
 
@@ -118,6 +120,10 @@ class ModelBuilderExtension {
     	packageFqName + ".util.builder"
     }
 
+    def builderInterfaceFqName(GenClassifier it) {
+    	genPackage.builderInterfacePackage + "." + genPackage.builderInterfaceName
+    }
+    
     /* Builder helpers  */
     def builderBuilderDirectory(GenClass it) {
     	genPackage.packagePath + "/util/builder";
@@ -150,20 +156,33 @@ class ModelBuilderExtension {
 	}    
 	
 	def isNonAbstractBuilderType(GenClass it) {
-		ecoreClass.instanceClassName === null && !abstract
+		//ecoreClass.instanceClassName === null && !abstract
+		ecoreClassifier.isBuilderType
 	}
 	
-	// extensions to decide whether element is a (potentially abstract) builder type 
-	def isBuilderType(GenDataType it) {
-		false	
-	} 
 	
 	def isBuilderType(GenClassifier it) {
-		ecoreClassifier.instanceClassName === null	
+		ecoreClassifier.isBuilderType
 	}
 
+    def isBuilderType(GenFeature it) {
+    	System.out.println("N: " + formattedName + " - " + typeGenClass?.name + " - " + typeGenClassifier?.name + " - " + (typeGenClassifier.ecoreClassifier instanceof EClass))
+	    typeGenClassifier.isBuilderType
+    }
+
+    def isBuilderType(EClassifier it) {
+		if (it instanceof EClass) {
+			return (it as EClass).isBuilderType			
+		}
+		false
+    }
+
+    def isBuilderType(EClass it) {
+		instanceClassName === null && !abstract			
+    }
+
 	def isBuilderType(GenClass it) {
-		ecoreClass.instanceClassName === null	
+		ecoreClass.isBuilderType
 	}
 
 	// an extension to filter the structural features of a EClass by derived or not changeable ones
@@ -200,161 +219,11 @@ class ModelBuilderExtension {
 	}
 
   	def factoryInstance(GenClass it) {
-    	val StringBuilder sb = new StringBuilder();
-	    sb.append(genPackage.getFactoryName());
-    	sb.append(".");
-    	sb.append(genPackage.getFactoryInstanceName());
-    	sb.toString();
+    	genPackage.getFactoryName() + "." + genPackage.getFactoryInstanceName()
   	}
-  	
-  	def effectiveType(GenFeature it) {
-  		if (typeGenClass !== null){
-  			typeGenClass
-  		} else {
-  			typeGenClassifier;
-  		}
+
+  	def factoryInstanceFqName(GenClass it) {
+    	genPackage.packageFqName + "." + factoryInstance
   	}
-  
-	/*
-	def featureModifierMethodPrefix() {
-		return "with";
-	}
-
-	// extensions to decide whether element is a non-abstract builder type
-	def isNonAbstractBuilderType(EDataType it) {
-		false;
-	} 
-    def isNonAbstractBuilderType(EClassifier it) {
-    	false;
-    }
-    
-    def isNonAbstractBuilderType(EClass it) {
-    	instanceClassName === null && !abstract;
-	}
-
-
-	// extensions to decide whether element is a (potentially abstract) builder type 
-    def isBuilderType(EDataType it) {
-     	false; 	
- 	} 
- 	
-    def isBuilderType(EClassifier it) {
-    	false;
-	}
-    
-    def isBuilderType(EClass it) { 
-    	instanceClassName === null;
-	}
-
-
-    // extension with convinience string replacements
-    def toJavaRef(String it) {
-     	return replaceAll("\\$", ".").replaceAll("^boolean$", "Boolean").replaceAll("^int$", "Integer"); 	
- 	}
-
-    def fqBuilderJavaPackage(GenClass it) {
-    	getContfqGenJavaPackage + ".util.builder";	
-	}
-	
-    def fqBuilderJava(GenClass it) { 
-    	fqBuilderJavaPackage + "." + builderName();
-    	
-	}
-
-    // extensions for the generated builder java classes of an Ecore metamodel
-    def fqBuilderFile(GenClass it) {
-    	fqBuilderJava.replaceAll("\\.", "/") + ".java";
-    	
-    }
-        
-    def fqBuilderJavaPackage(GenPackage it)	{
-    	packageFqName + ".util.builder";	
-	}
-	
-	
-    def builderName(GenClass it) { 
-    	name + "Builder";	
-	}
-
-    // extensions for the generated builder facade java classes of an Ecore metamodel
-    def fqFacadeFile(GenPackage it) { 
-    	fqFacadeJava.replaceAll("\\.", "/") + ".java";	
-	}
-	
-    def fqFacadeJava(GenPackage it) { 
-    	fqFacadeJavaPackage + "." + facadeName;
-    	
-	}
-    
-    def fqFacadeJavaPackage(GenPackage it) { 
-    	fqBuilderJavaPackage;    	
-	}
-    
-    def facadeName(GenPackage it) { 
-    	getEcorePackage.name.toFirstUpper() + "Builders";	
-	}
-
-    // extensions for the generated builder interface java class of an Ecore metamodel
-    def fqInterfaceFile(GenPackage it) { 
-    	fqInterfaceJava.replaceAll("\\.", "/") + ".java";	
-	}
-
-    def fqInterfaceJava(GenPackage it) { 
-    	fqInterfaceJavaPackage + "." + interfaceName;
-   	}
-    
-    def fqInterfaceJavaPackage(GenPackage it) { 
-    	return fqBuilderJavaPackage();	
-	}
-     
-    def interfaceName(GenPackage it) {
-    	"I" + getEcorePackage.name.toFirstUpper() + "Builder";	
-    }
-
-    // extensions for the already generated java classes of an Ecore metamodel
-    def fqGenJava(GenClass it) { 
-    	fqGenJavaPackage + "." + name.toJavaRef;	
-	}
-
-
-    // extension to calculate the name of the feature access method
-    //def featureAccessMethod(EStructuralFeature it) { 
-    // 	(featureModifierMethodPrefix() === null || featureModifierMethodPrefix.trim().length == 0) ? safeName() : (featureModifierMethodPrefix() + p_sf.safeName().toFirstUpper());
-    //}
-
-*/	
-
-/*
-    def fqGenJavaPackage(EClassifier p_ec) {
-    	return JAVA templates.JavaExtensions.fqGenJavaPackage(org.eclipse.emf.ecore.EClassifier);	
-	}
-
-
-     def fqGenJavaPackage(EPackage p_ep) : JAVA templates.JavaExtensions.fqGenJavaPackage(org.eclipse.emf.ecore.EPackage);
-     def factoryInstance(EClassifier p_ec){ return JAVA templates.JavaExtensions.factoryInstance(org.eclipse.emf.ecore.EClassifier);
-
-// an extension to filter the structural features of a EClass by derived or not changeable ones
-     def structuralFeatures(EClass p_ec): p_ec.eAllStructuralFeatures.reject(e|e.derived || !e.changeable).sortBy(e|e.name);
-     def unaryStructuralFeatures(EClass p_ec): p_ec.structuralFeatures().reject(sf|sf.isMulti());
-     def multipleStructuralFeatures(EClass p_ec): p_ec.structuralFeatures().select(sf|sf.isMulti());
-
-// an extension to decide whether the structural feature is a list
-     def isMulti(EStructuralFeature p_sf): p_sf.upperBound > 1 || p_sf.upperBound == -1;
-
-// an extension to get the name of a structural feature. If the name clashes with Java keyword like 'class', we append a '_' to the name
-     def safeName(EStructuralFeature p_sf): JAVA templates.JavaExtensions.safeName(org.eclipse.emf.ecore.EStructuralFeature);
-     def safeSetterName(EStructuralFeature p_sf): JAVA templates.JavaExtensions.safeSetterName(org.eclipse.emf.ecore.EStructuralFeature);
-     def potentiallyPluralizedName(EStructuralFeature p_sf) : JAVA templates.JavaExtensions.potentiallyPluralizedName(org.eclipse.emf.ecore.EStructuralFeature);
-
-// extension to calculate the name of the feature access method
-     def featureAccessMethod(EStructuralFeature p_sf) : (featureModifierMethodPrefix() == null || featureModifierMethodPrefix().trim().length == 0) ?
-  p_sf.safeName() 
-  :(featureModifierMethodPrefix() + p_sf.safeName().toFirstUpper()); 
-
-// option to control the prefix of the feature modifier method (i.e. "with"). Can be empty or null to skip the prefix.
-String featureModifierMethodPrefix() : ((String)GLOBALVAR featureModifierMethodPrefix);
-
-Void throwRuntimeException(String p_message): JAVA templates.JavaExtensions.throwRuntimeException(java.lang.String);
-*/
-
+  	  	
 }
