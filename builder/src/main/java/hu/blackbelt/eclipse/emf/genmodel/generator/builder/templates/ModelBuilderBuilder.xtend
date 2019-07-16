@@ -71,7 +71,7 @@ class ModelBuilderBuilder {
 		     * @return new instance of the «modelJavaFqName» type
 		     */
 		    public «modelJavaFqName» build() {
-		    	final «modelJavaFqName» _newInstance = «factoryInstanceFqName()».create«name.toFirstUpper()»();
+		    	final «modelJavaFqName» _newInstance = «factoryInstanceFqName()».create«name»();
 			 	«FOR unary : unaryStructuralFeatures»
 			 		«unary.assignFeature("_newInstance")»
 			 	«ENDFOR»		
