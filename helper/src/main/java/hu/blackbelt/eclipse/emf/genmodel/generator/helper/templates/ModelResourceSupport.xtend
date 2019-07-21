@@ -76,7 +76,7 @@ class ModelResourceSupport implements IGenerator {
 			}
 			
 			«FOR g : allGenPackagesWithConcreteClasses»
-				«FOR s : g.genClasses.filter[ecoreClass.instanceClass === null]»
+				«FOR s : g.genClasses.filter[ecoreClass.instanceClass === null && ecoreClass.interface === false]»
 					public Stream<«s.genPackage.packageFqName».«s.name»> getStreamOf«s.genPackage.packageJavaName»«s.name»() {
 						return getStreamOf(«s.genPackage.packageFqName».«s.name».class);
 					}
