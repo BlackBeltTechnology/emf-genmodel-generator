@@ -5,9 +5,11 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
+import hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine.HelperGeneratorConfig
 
 class ModelResourceSupport implements IGenerator {
 	@Inject extension Naming
+	@Inject HelperGeneratorConfig config;
 	
 	override doGenerate(Resource input, IFileSystemAccess fsa) {		
 		input.allContents.filter(GenModel).forEach[
@@ -161,18 +163,22 @@ class ModelResourceSupport implements IGenerator {
 			}
 			
 			public static Resource.Factory get«modelName»Factory() {
-			    return new «moduleEmfName»ResourceFactoryImpl() {
-			        @Override
-			        public Resource createResource(URI uri) {
-			            Resource result = new «moduleEmfName»ResourceImpl(uri) {
-			                @Override
-			                protected boolean useUUIDs() {
-			                    return true;
-			                }
-			            };
-			            return result;
-			        }
-			    };
+				«IF config.generateUuid»
+				    return new «moduleEmfName»ResourceFactoryImpl() {
+				        @Override
+				        public Resource createResource(URI uri) {
+				            Resource result = new «moduleEmfName»ResourceImpl(uri) {
+				                @Override
+				                protected boolean useUUIDs() {
+				                    return true;
+				                }
+				            };
+				            return result;
+				        }
+				    };
+			    «ELSE»
+				    return new «moduleEmfName»ResourceFactoryImpl();
+			    «ENDIF»
 			}
 
 			
