@@ -37,7 +37,6 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <eclipse-p2-base>http://download.eclipse.org/releases/2018-12</eclipse-p2-base>
 
         <!-- Xtend / Xcore -->
         <core-resources-version>3.12.0</core-resources-version>
@@ -56,13 +55,6 @@
 
     </properties>
     
-    <repositories>
-        <repository>
-            <id>eclipse</id>
-            <layout>p2</layout>
-            <url>${eclipse-p2-base}</url>
-        </repository>
-    </repositories>
     <developers>
         <developer>
             <id>robson</id>
@@ -137,6 +129,13 @@
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho-version}</version>
                 <configuration>
+                    <target>
+                        <artifact>
+                            <groupId>hu.blackbelt.eclipse</groupId>
+                            <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator.targetdefinition</artifactId>
+                            <version>${project.version}</version>
+                        </artifact>
+                    </target>
                     <environments>
                         <environment>
                             <os>linux</os>
@@ -186,6 +185,11 @@
                     </execution>
                 </executions>
             </plugin>
+            
+   			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-source-feature-plugin</artifactId>
+			</plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -229,6 +233,53 @@
                         <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
+
+
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-source-plugin</artifactId>
+					<version>${tycho-version}</version>
+
+					<executions>
+						<execution>
+							<id>plugin-source</id>
+							<goals>
+								<goal>plugin-source</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.eclipse.tycho.extras</groupId>
+					<artifactId>tycho-source-feature-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<executions>
+						<execution>
+							<id>source-feature</id>
+							<phase>package</phase>
+							<goals>
+								<goal>source-feature</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-p2-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<executions>
+						<execution>
+							<id>attach-p2-metadata</id>
+							<phase>package</phase>
+							<goals>
+								<goal>p2-metadata</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -269,6 +320,25 @@
                                 		</versionRange>
                                 		<goals>
                                 			<goal>java</goal>
+                                		</goals>
+                                	</pluginExecutionFilter>
+                                	<action>
+                                		<ignore></ignore>
+                                	</action>
+                                </pluginExecution>
+                                <pluginExecution>
+                                	<pluginExecutionFilter>
+                                		<groupId>
+                                			org.eclipse.tycho
+                                		</groupId>
+                                		<artifactId>
+                                			tycho-packaging-plugin
+                                		</artifactId>
+                                		<versionRange>
+                                			[1.3.0,)
+                                		</versionRange>
+                                		<goals>
+                                			<goal>validate-id</goal>
                                 		</goals>
                                 	</pluginExecutionFilter>
                                 	<action>
@@ -499,7 +569,8 @@
                 </property>
             </activation>
 		    <modules>
-		        <module>core</module>
+                <module>targetdefinition</module>
+                <module>core</module>
 		        <module>helper</module>
                 <module>builder</module>
                 <module>ecore</module>
