@@ -14,7 +14,7 @@
       <category name="emf_genmodel_generator_source"/>
    </feature>
    
-   <category-def name="emf_genmodel_generator" label="EMF GenModel Generator Source">
+   <category-def name="emf_genmodel_generator_source" label="EMF GenModel Generator Source">
       <description>
          EMF GenModel Generator source code.
       </description>
