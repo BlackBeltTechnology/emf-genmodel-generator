@@ -223,6 +223,9 @@ class ModelResourceSupport implements IGenerator {
 			            if (fragment != null) {
 			                result = result.appendFragment(fragment);
 			            }
+						if (result == null) {
+							return uriPar;
+						}
 			            return normalize(result);
 			        }
 			    });
