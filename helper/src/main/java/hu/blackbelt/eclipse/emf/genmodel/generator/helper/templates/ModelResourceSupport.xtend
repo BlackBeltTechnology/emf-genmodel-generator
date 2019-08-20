@@ -811,6 +811,7 @@ class ModelResourceSupport implements IGenerator {
 					public «modelName»ModelResourceSupport.LoadArguments.LoadArgumentsBuilder loadOptions(
 							final Map<Object, Object> loadOptions) {
 						requireNonNull(loadOptions);
+						this.loadOptions = loadOptions;
 						loadOptions$set = true;
 						return this;
 					}
@@ -843,6 +844,7 @@ class ModelResourceSupport implements IGenerator {
 					public «modelName»ModelResourceSupport.LoadArguments.LoadArgumentsBuilder inputStream(
 							final InputStream inputStream) {
 						requireNonNull(inputStream);
+						this.inputStream = inputStream;
 						inputStream$set = true;
 						return this;
 					}
