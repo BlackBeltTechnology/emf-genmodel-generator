@@ -39,6 +39,7 @@ class ModelBuilderFacade {
 	 public class «builderFacadeName» {
 		«FOR cl : genClasses.filter[isNonAbstractBuilderType]»
 			«builderAccessMethod(cl)»
+			«decoratorAccessMethod(cl)»
 		«ENDFOR»
 	}
     '''
@@ -47,6 +48,13 @@ class ModelBuilderFacade {
    '''
     public static final «builderBuilderName» new«builderBuilderName»() {
       return «builderBuilderName».create();
+    }
+   '''
+   
+   def decoratorAccessMethod(GenClass it)
+   '''
+    public static final «builderBuilderName» use«name»(«modelJavaFqName» instance) {
+      return «builderBuilderName».use(instance);
     }
    '''
 
