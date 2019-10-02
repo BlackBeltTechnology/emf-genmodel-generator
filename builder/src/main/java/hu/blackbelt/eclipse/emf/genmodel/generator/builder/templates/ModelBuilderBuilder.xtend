@@ -40,6 +40,7 @@ class ModelBuilderBuilder {
 		  * @generated
 		  */
 		public class «builderBuilderName()» implements «genPackage.builderInterfaceName»<«modelJavaFqName»> {
+		    private  «modelJavaFqName» $instance = null; 
 		 
 		    // features and builders
 		 	«FOR unary : unaryStructuralFeatures»
@@ -71,14 +72,22 @@ class ModelBuilderBuilder {
 		     * @return new instance of the «modelJavaFqName» type
 		     */
 		    public «modelJavaFqName» build() {
-		    	final «modelJavaFqName» _newInstance = «factoryInstanceFqName()».create«name»();
+		    	
+		    	final «modelJavaFqName» _instance;
+		    	
+		    	if ($instance == null) {
+		    		_instance = «factoryInstanceFqName()».create«name»();
+		    	} else {
+		    		_instance = $instance;
+		    	}
+
 			 	«FOR unary : unaryStructuralFeatures»
-			 		«unary.assignFeature("_newInstance")»
+			 		«unary.assignFeature("_instance")»
 			 	«ENDFOR»		
 			 	«FOR multi : multipleStructuralFeatures»
-			 		«multi.assignFeatureMulti("_newInstance")»
+			 		«multi.assignFeatureMulti("_instance")»
 			 	«ENDFOR»
-		    	return _newInstance;
+		    	return _instance;
 			}
 
 		    /**
@@ -86,6 +95,15 @@ class ModelBuilderBuilder {
 		     * @see #new«builderBuilderName()»()
 		     */ 
 		    private «builderBuilderName()»() {
+		    }
+
+
+		    /**
+		     * Builder is not instantiated with an instance.
+		     * @see #new«builderBuilderName()»()
+		     */ 
+		    private «builderBuilderName»(«modelJavaFqName» instance) {
+		    	$instance = instance;
 		    }
 		   
 		    /**
@@ -95,6 +113,15 @@ class ModelBuilderBuilder {
 		    public static «builderBuilderName()» create() {
 		        return new «builderBuilderName()»();
 		    }
+
+		    /**
+		     * This method creates a new instance of the «builderBuilderName()» from the given instance of class.
+		     * @return new instance of the «builderBuilderName()»
+		     */
+		    public static «builderBuilderName()» use(«modelJavaFqName» instance) {
+		        return new «builderBuilderName()»(instance);
+		    }
+
 
 		 	«FOR unary : unaryStructuralFeatures»
 		 		«unary.method(it)»
