@@ -49,22 +49,6 @@ build:
       settings: .maven.xml
 
     - wercker/maven:
-      goals: validate
-      pom: ./targetdefinition/pom.xml
-      profiles: update-target-versions
-      maven_opts: -Dtycho.mode=maven
-      settings: .maven.xml
-      cache_repo: true
-
-    - wercker/maven:
-      goals: validate
-      pom: ./site/pom.xml
-      profiles: update-category-versions
-      maven_opts: -Dtycho.mode=maven
-      settings: .maven.xml
-      cache_repo: true
-
-    - wercker/maven:
       goals: clean deploy
       profiles: ${BUILD_PROFILES}
       settings: .maven.xml
