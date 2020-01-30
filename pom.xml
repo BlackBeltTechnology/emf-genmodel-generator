@@ -52,8 +52,15 @@
         <emf-mwe2-launch-version>2.10.0</emf-mwe2-launch-version>
         <emf-mwe-utils-version>1.4.0</emf-mwe-utils-version>
         <xpand-version>2.0.0</xpand-version>
-
     </properties>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://opensource.org/licenses/Apache-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <developers>
         <developer>
