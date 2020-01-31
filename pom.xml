@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>hu.blackbelt.eclipse</groupId>
     <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>EMF GenModel Generator Project</name>
     <description>EMF GenModel Generator Project</description>
