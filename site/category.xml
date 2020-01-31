@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature id="hu.blackbelt.eclipse.emf.genmodel.generator.feature" version="1.0.0.qualifier">
-      <category name="hu.blackbelt.eclipse.emf.genmodel.generator"/>
+   <feature id="hu.blackbelt.eclipse.emf.genmodel.generator.feature" version="1.0.0">
+      <category name="emf_genmodel_generator"/>
    </feature>
-    <category-def name="hu.blackbelt.eclipse.emf.genmodel.generator" label="EMF GenModel Generator"/>
+   <category-def name="emf_genmodel_generator" label="EMF GenModel Generator">
+      <description>
+         EMF GenModel Generator
+      </description>
+   </category-def>
+    
+
+   <feature id="hu.blackbelt.eclipse.emf.genmodel.generator.feature.source">
+      <category name="emf_genmodel_generator_source"/>
+   </feature>
+   
+   <category-def name="emf_genmodel_generator_source" label="EMF GenModel Generator Source">
+      <description>
+         EMF GenModel Generator source code.
+      </description>
+   </category-def>
 </site>

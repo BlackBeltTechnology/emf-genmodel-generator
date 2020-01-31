@@ -1,7 +1,6 @@
 /**/target/
 /**/target-buildVariable/
 /**/bin/
-/**/.settings/
 /**/.checkstyle
 /**/.idea/
 /**/*.iml
@@ -39,7 +38,6 @@ tmp/
 *.swp
 *~.nib
 local.properties
-.settings/
 .loadpath
 .recommenders
 .externalToolBuilders/

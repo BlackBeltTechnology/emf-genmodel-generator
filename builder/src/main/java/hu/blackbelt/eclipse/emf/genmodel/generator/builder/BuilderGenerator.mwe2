@@ -1,0 +1,32 @@
+module hu.blackbelt.eclipse.emf.genmodel.generator.builder.BuilderGenerator
+
+var modelDir = "model"
+var javaGenPath = "src-gen"
+var featureModifierMethodPrefix = "with"
+
+Workflow {	
+
+	bean = engine.ModelBuilderGeneratorStandaloneSetup : genModelBuilderSetup {
+			config = {
+				javaGenPath = javaGenPath
+				featureModifierMethodPrefix = featureModifierMethodPrefix
+			}
+			doInit = true
+		}
+	
+	component = org.eclipse.xtext.mwe.Reader {
+		path = modelDir
+		register = genModelBuilderSetup
+		loadResource = {
+			slot = "modelBuilder"
+		}
+	}
+	
+	component = org.eclipse.xtext.generator.GeneratorComponent {
+		register = genModelBuilderSetup
+        slot = 'modelBuilder'
+        outlet = {
+            path = javaGenPath
+        }
+    }	   
+}

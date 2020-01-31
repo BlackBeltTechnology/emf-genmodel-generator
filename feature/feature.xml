@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="hu.blackbelt.eclipse.emf.genmodel.generator.feature"
-      label="EMF Helper Generator (Core)"
-      version="1.0.0.qualifier"
+      label="EMF GenModel based generator"
+      version="1.0.0"
       provider-name="BlackBelt Technology">
 
-   <description url="https://github.com/BlackBeltTechnology/emfhelpergenerator">
-      EMF Helper Generator - Derived from https://github.com/siamak-haschemi/EMF-Builder-Generator
+   <description url="https://github.com/BlackBeltTechnology/emf-genmodel-generator">
+      EMF GenModel based generator
    </description>
 
-    <copyright url="http://www.blackbelt.hu">
+   <copyright url="http://www.blackbelt.hu">
       Copyright BlackBelt Technology, 2019
    </copyright>
 
@@ -214,25 +214,23 @@ litigation.
    </license>
 
    <requires>
-      <import plugin="org.eclipse.xpand" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jface" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
+      <import plugin="com.google.inject" version="2.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtend" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.mwe.utils" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.xtend.typesystem.emf" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.xtend.util.stdlib" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf" version="2.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.codegen.ecore" version="2.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.ecore" version="2.5.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.common" version="2.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.runtime" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.core.resources" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="com.google.inject" version="2.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe.core" version="1.0.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.emf.mwe.utils" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.mwe2.language" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.mwe2.launch" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.emf.mwe2.runtime" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.emf.mwe.core" version="1.0.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.jface" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui" version="3.5.0" match="greaterOrEqual"/>
-      <import plugin="org.eclipse.ui.ide" version="3.5.0" match="greaterOrEqual"/>
    </requires>
 
    <plugin
@@ -244,6 +242,20 @@ litigation.
 
    <plugin
          id="hu.blackbelt.eclipse.emf.genmodel.generator.helper"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="hu.blackbelt.eclipse.emf.genmodel.generator.builder"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="hu.blackbelt.eclipse.emf.genmodel.generator.ecore"
          download-size="0"
          install-size="0"
          version="0.0.0"
