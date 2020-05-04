@@ -2,12 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: hu.blackbelt.eclipse.emf.genmodel.generator.core
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1.qualifier
 Bundle-Vendor: %providerName
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: hu.blackbelt.eclipse.emf.genmodel.generator.core,
- hu.blackbelt.eclipse.emf.genmodel.generator.core.engine,
- hu.blackbelt.eclipse.emf.genmodel.generator.core.validation
+Export-Package: hu.blackbelt.eclipse.emf.genmodel.generator.core.engine,
+ hu.blackbelt.eclipse.emf.genmodel.generator.core.validation;uses:="org.eclipse.xtext.validation"
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.emf.codegen.ecore,
  org.eclipse.emf.mwe2.launch,

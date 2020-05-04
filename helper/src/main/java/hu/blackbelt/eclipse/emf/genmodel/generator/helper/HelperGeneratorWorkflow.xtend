@@ -14,6 +14,7 @@ class HelperGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
 	String modelDir
 	String slot = "helperGenerator"
 	Boolean generateUuid = true;
+	String customResourceFactory;
 	
 	override preInvoke() {
 		val slotEntry = new ResourceLoadingSlotEntry() => [
@@ -23,6 +24,7 @@ class HelperGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
 		val config = new HelperGeneratorConfig() => [
 			setJavaGenPath(javaGenPath)
 			setGenerateUuid(generateUuid)
+			setCustomResourceFactory(customResourceFactory)
 		]
 		
 		val setup = new ModelHelperGeneratorStandaloneSetup() => [

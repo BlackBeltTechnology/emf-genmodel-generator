@@ -78,7 +78,18 @@ class ModelResourceSupport implements IGenerator {
 		/**
 		 * This class wraps EMF ResourceSet. This helps to manage URI handler and gives Java 8 stream api over it.
 		 * It can help handle the model / load save using builder pattern for parameter construction.
+		 *
 		 * Examples:
+		 *
+		 * It can be used with an existing {@link ResourceSet}. On that case the the {@link ResourceSet}'s URI will be
+		 * used for save.
+		 * <pre>
+		 *    «modelName»ModelResourceSupport «modelName.decapitalize»Model = «modelName»ModelResourceSupport.«modelName.decapitalize»ModelResourceSupportBuilder()
+		 *                 .resourceSet(resourceSet)
+		 *                 .build();
+		 *    rdbmsModel.save();
+		 * </pre>
+		 *
 		 *
 		 * Load an model from file. The file URI is used as base URI.
 		 * <pre>
@@ -129,11 +140,13 @@ class ModelResourceSupport implements IGenerator {
 		public class «modelName»ModelResourceSupport {
 		
 			private static Diagnostician diagnostician = new Diagnostician();
-		
+
 			private ResourceSet resourceSet;
 			
 			private URI uri;
 		
+			private static ReourceFactory factory = getResourceFactory();
+			
 			/**
 			 * Create {@link Stream} from {@link Iterator}.
 			 * @param sourceIterator the {@link Iterator} {@link Stream} made from
@@ -264,7 +277,7 @@ class ModelResourceSupport implements IGenerator {
 			    register«modelName»Metamodel(resourceSet);
 			    resourceSet.getResourceFactoryRegistry()
 						.getExtensionToFactoryMap()
-						.put(ResourceFactoryRegistryImpl.DEFAULT_EXTENSION, get«modelName»Factory());
+						.put(ResourceFactoryRegistryImpl.DEFAULT_EXTENSION, factory);
 			    return resourceSet;
 			}
 		
@@ -273,12 +286,15 @@ class ModelResourceSupport implements IGenerator {
 			 * @return Map of options
 			 */
 			public static Map<Object, Object> get«modelName»ModelDefaultLoadOptions() {
-			    Map<Object, Object> loadOptions = new HashMap<>();
-			    //loadOptions.put(XMLResource.OPTION_RECORD_UNKNOWN_FEATURE, Boolean.TRUE);
-			    //loadOptions.put(XMLResource.OPTION_EXTENDED_META_DATA, Boolean.TRUE);
-			    loadOptions.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, Boolean.TRUE);
-			    loadOptions.put(XMLResource.OPTION_LAX_FEATURE_PROCESSING, Boolean.TRUE);
-			    loadOptions.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_DISCARD);
+				Map<Object, Object> loadOptions = new HashMap<>();
+				
+				«IF config.customResourceFactory === null || config.customResourceFactory.empty»
+					//loadOptions.put(XMLResource.OPTION_RECORD_UNKNOWN_FEATURE, Boolean.TRUE);
+					//loadOptions.put(XMLResource.OPTION_EXTENDED_META_DATA, Boolean.TRUE);
+					loadOptions.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, Boolean.TRUE);
+					loadOptions.put(XMLResource.OPTION_LAX_FEATURE_PROCESSING, Boolean.TRUE);
+					loadOptions.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_DISCARD);
+				«ENDIF»
 			    return loadOptions;
 			}
 		
@@ -287,24 +303,27 @@ class ModelResourceSupport implements IGenerator {
 			 * @return Map of options
 			 */
 			public static Map<Object, Object> get«modelName»ModelDefaultSaveOptions() {
-			    Map<Object, Object> saveOptions = new HashMap<>();
-			    saveOptions.put(XMLResource.OPTION_DECLARE_XML, Boolean.TRUE);
-			    saveOptions.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_DISCARD);
-			    saveOptions.put(XMLResource.OPTION_URI_HANDLER, new URIHandlerImpl() {
-			        public URI deresolve(URI uri) {
-			            return uri.hasFragment()
-								&& uri.hasOpaquePart()
-								&& this.baseURI.hasOpaquePart()
-								&& uri.opaquePart().equals(this.baseURI.opaquePart())
-									? URI.createURI("#" + uri.fragment())
-									: super.deresolve(uri);
-			        }
-			    });
-			    saveOptions.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
-			    saveOptions.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, Boolean.TRUE);
-			    saveOptions.put(XMLResource.OPTION_SKIP_ESCAPE_URI, Boolean.FALSE);
-			    saveOptions.put(XMLResource.OPTION_ENCODING, "UTF-8");
-			    return saveOptions;
+				Map<Object, Object> saveOptions = new HashMap<>();
+				«IF config.customResourceFactory === null || config.customResourceFactory.empty»
+					saveOptions.put(XMLResource.OPTION_DECLARE_XML, Boolean.TRUE);
+					saveOptions.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_DISCARD);
+					saveOptions.put(XMLResource.OPTION_URI_HANDLER, new URIHandlerImpl() {
+						public URI deresolve(URI uri) {
+							return uri.hasFragment()
+									&& uri.hasOpaquePart()
+									&& this.baseURI.hasOpaquePart()
+									&& uri.opaquePart().equals(this.baseURI.opaquePart())
+										? URI.createURI("#" + uri.fragment())
+										: super.deresolve(uri);
+						}
+					});
+					saveOptions.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
+					saveOptions.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, Boolean.TRUE);
+					saveOptions.put(XMLResource.OPTION_SKIP_ESCAPE_URI, Boolean.FALSE);
+					saveOptions.put(XMLResource.OPTION_ENCODING, "UTF-8");
+				«ENDIF»
+
+				return saveOptions;
 			}
 
 			/**
@@ -312,21 +331,51 @@ class ModelResourceSupport implements IGenerator {
 			 * @return the created {@link Resource.Factory}
 			 */
 			public static Resource.Factory get«modelName»Factory() {
-				«IF config.generateUuid»
-				    return new «moduleEmfName»ResourceFactoryImpl() {
-				        @Override
-				        public Resource createResource(URI uri) {
-				            Resource result = new «moduleEmfName»ResourceImpl(uri) {
-				                @Override
-				                protected boolean useUUIDs() {
-				                    return true;
-				                }
-				            };
-				            return result;
-				        }
-				    };
+
+				«IF config.customResourceFactory !== null && !config.customResourceFactory.empty »
+					return new «config.customResourceFactory»();
 			    «ELSE»
-				    return new «moduleEmfName»ResourceFactoryImpl();
+					return new «moduleEmfName»ResourceFactoryImpl() {
+						@Override
+						public Resource createResource(URI uri) {
+							«IF config.generateUuid»
+								Resource result = new «moduleEmfName»ResourceImpl(uri) {
+									@Override
+									protected boolean useUUIDs() {
+										return true;
+									}
+								};
+						    «ELSE»
+								Resource result = new «moduleEmfName»ResourceImpl(uri);
+							«ENDIF»
+							Map<Object, Object> loadOptions = result.getDefaultLoadOptions();
+							//loadOptions.put(XMLResource.OPTION_RECORD_UNKNOWN_FEATURE, Boolean.TRUE);
+							//loadOptions.put(XMLResource.OPTION_EXTENDED_META_DATA, Boolean.TRUE);
+							loadOptions.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, Boolean.TRUE);
+							loadOptions.put(XMLResource.OPTION_LAX_FEATURE_PROCESSING, Boolean.TRUE);
+							loadOptions.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_DISCARD);
+							
+							Map<Object, Object> saveOptions = result.getDefaultLoadOptions();
+							saveOptions.put(XMLResource.OPTION_DECLARE_XML, Boolean.TRUE);
+							saveOptions.put(XMLResource.OPTION_PROCESS_DANGLING_HREF, XMLResource.OPTION_PROCESS_DANGLING_HREF_DISCARD);
+							saveOptions.put(XMLResource.OPTION_URI_HANDLER, new URIHandlerImpl() {
+								public URI deresolve(URI uri) {
+									return uri.hasFragment()
+											&& uri.hasOpaquePart()
+											&& this.baseURI.hasOpaquePart()
+											&& uri.opaquePart().equals(this.baseURI.opaquePart())
+											? URI.createURI("#" + uri.fragment())
+											: super.deresolve(uri);
+								}
+							});
+							saveOptions.put(XMLResource.OPTION_SCHEMA_LOCATION, Boolean.TRUE);
+							saveOptions.put(XMLResource.OPTION_DEFER_IDREF_RESOLUTION, Boolean.TRUE);
+							saveOptions.put(XMLResource.OPTION_SKIP_ESCAPE_URI, Boolean.FALSE);
+							saveOptions.put(XMLResource.OPTION_ENCODING, "UTF-8");
+							return result;
+
+						}
+					};
 			    «ENDIF»
 			}
 
@@ -370,7 +419,8 @@ class ModelResourceSupport implements IGenerator {
 
 		        // If resource does not exists, create resource
 				if (getResourceSet().getResource(this.uri, false) == null) {
-					getResourceSet().createResource(this.uri);
+					Resource resource = factory.createResource(this.uri);
+					getResourceSet().getResources().add(resource);
 				}
 		    }
 		
@@ -441,7 +491,8 @@ class ModelResourceSupport implements IGenerator {
 			 */
 			public Resource getResource() {
 				if (getResourceSet().getResource(uri, false) == null) {
-					getResourceSet().createResource(uri);
+					Resource resource = factory.createResource(this.uri);
+					getResourceSet().getResources().add(resource);
 				}
 				return getResourceSet().getResource(uri, false);
 			}
@@ -487,7 +538,7 @@ class ModelResourceSupport implements IGenerator {
 		
 				Resource resource = getResource();
 				Map loadOptions = loadArguments.getLoadOptions()
-						.orElseGet(«modelName»ModelResourceSupport::get«modelName»ModelDefaultLoadOptions);
+						.orElseGet(HashMap::new);
 		
 				try {
 					InputStream inputStream = loadArguments.getInputStream()
