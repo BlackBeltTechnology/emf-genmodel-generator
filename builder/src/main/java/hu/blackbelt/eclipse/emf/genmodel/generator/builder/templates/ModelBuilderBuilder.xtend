@@ -92,7 +92,7 @@ class ModelBuilderBuilder {
 
 		    /**
 		     * Builder is not instantiated with a constructor.
-		     * @see #new«builderBuilderName()»()
+		     * @see «genPackage.builderFacadeName»#new«builderBuilderName()»()
 		     */ 
 		    private «builderBuilderName()»() {
 		    }
@@ -100,7 +100,7 @@ class ModelBuilderBuilder {
 
 		    /**
 		     * Builder is not instantiated with an instance.
-		     * @see #new«builderBuilderName()»()
+		     * @see  «genPackage.builderFacadeName»#use«builderBuilderName()»()
 		     */ 
 		    private «builderBuilderName»(«modelJavaFqName» instance) {
 		    	$instance = instance;
@@ -262,6 +262,12 @@ class ModelBuilderBuilder {
 
 		public «p_context.builderBuilderName» «featureAccessMethod»(java.util.Collection<? extends «typeDeclaration»> p_«safeName()»){
 			m_«safeName()».addAll(p_«safeName()»);
+			m_feature«safeName().toFirstUpper()»Set = true;
+			return this;
+		}
+
+		public «p_context.builderBuilderName» «featureAccessMethod»(«typeDeclaration»...p_«safeName()»){
+			m_«safeName()».addAll(java.util.Arrays.asList(p_«safeName()»));
 			m_feature«safeName().toFirstUpper()»Set = true;
 			return this;
 		}

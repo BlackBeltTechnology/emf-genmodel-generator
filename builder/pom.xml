@@ -5,7 +5,7 @@
   <parent>
     <groupId>hu.blackbelt.eclipse</groupId>
     <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
   </parent>
   <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator.builder</artifactId>
   <packaging>eclipse-plugin</packaging>
