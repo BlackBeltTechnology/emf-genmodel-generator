@@ -6,7 +6,7 @@
 	<parent>
         <groupId>hu.blackbelt.eclipse</groupId>
         <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>hu.blackbelt.eclipse.emf.genmodel.generator.helper.site</artifactId>
