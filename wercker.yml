@@ -1,8 +1,6 @@
 box:
-      id: eu.gcr.io/judo-ng/maven
-      tag: latest
-      tag: 3.5.4-jdk-8
-      registry: https://eu.gcr.io
+  id: eu.gcr.io/judo-ng/judo-compiler
+  tag: 3.6.1-jdk11
 no-response-timeout: 15
 command-timeout: 60
 ignore-file: .gitignore
