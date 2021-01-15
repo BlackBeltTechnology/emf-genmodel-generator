@@ -1,0 +1,8 @@
+**Branch:** 
+${env.WERCKER_GIT_BRANCH}
+**P2 Update Site:**
+${env.JUDONG_P2_UPSTREAM}/repository/p2/${project-shortname}/${project.version}
+**Maven repository:** 
+${env.JUDONG_MAVEN_UPSTREAM_SNAPSHOT}/#browse/browse:maven-judo-release:hu%2Fblackbelt%2Feclipse%2F${project-shortname}
+**Wercker:** 
+https://app.wercker.com/${project-repositoryId}/runs/build/${env.WERCKER_RUN_ID}
