@@ -32,7 +32,7 @@
     <properties>
         <project-shortname>emf-genmodel-generator</project-shortname>
         <project-repositoryId>BlackBeltTechnology/emf-genmodel-generator</project-repositoryId>
-        <tycho-version>1.4.0</tycho-version>
+        <tycho-version>2.1.0</tycho-version>
         <build.qualifier>'v'yyyyMMddHHmm</build.qualifier>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
