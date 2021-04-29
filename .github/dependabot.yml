@@ -1,0 +1,21 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "04:00"
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: org.eclipse.platform:org.eclipse.equinox.common
+    versions:
+    - 3.14.0
+  - dependency-name: org.eclipse.emf:org.eclipse.emf.common
+    versions:
+    - 2.21.0
+  - dependency-name: org.apache.maven.wagon:wagon-file
+    versions:
+    - 3.4.2
+  - dependency-name: org.apache.maven.wagon:wagon-webdav-jackrabbit
+    versions:
+    - 3.4.2
