@@ -1,11 +1,11 @@
 package hu.blackbelt.eclipse.emf.genmodel.generator.helper
 
-import hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine.ModelHelperGeneratorStandaloneSetup
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.generator.GeneratorComponent.Outlet
 import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
 import org.eclipse.emf.mwe2.runtime.workflow.AbstractCompositeWorkflowComponent
 import hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine.HelperGeneratorConfig
+import hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine.ModelHelperGeneratorStandaloneSetup
 
 @Accessors
 class HelperGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
