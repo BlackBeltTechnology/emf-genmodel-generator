@@ -17,6 +17,7 @@ class BuilderGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
 	String modelDir
 	String featureModifierMethodPrefix = "with"
 	String slot = "builderGenerator"
+	boolean nullCheckByDefault = false
 	
 	override preInvoke() {
 		val slotEntry = new ResourceLoadingSlotEntry() => [
@@ -26,6 +27,7 @@ class BuilderGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
 		val config = new BuilderConfig() => [
 			setJavaGenPath(javaGenPath)
 			setFeatureModifierMethodPrefix(featureModifierMethodPrefix)
+			setNullCheckByDefault(nullCheckByDefault)
 		]
 		
 		val setup = new ModelBuilderGeneratorStandaloneSetup() => [
