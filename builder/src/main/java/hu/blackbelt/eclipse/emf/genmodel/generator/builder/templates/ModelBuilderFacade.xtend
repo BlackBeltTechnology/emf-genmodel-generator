@@ -49,6 +49,11 @@ class ModelBuilderFacade {
     public static final «builderBuilderName» new«builderBuilderName»() {
       return «builderBuilderName».create();
     }
+    «IF isNullCheck»
+        public static final «builderBuilderName» new«builderBuilderName»(boolean nullCheck) {
+          return «builderBuilderName».create(nullCheck);
+        }
+    «ENDIF»
    '''
    
    def decoratorAccessMethod(GenClass it)
@@ -56,6 +61,11 @@ class ModelBuilderFacade {
     public static final «builderBuilderName» use«name»(«modelJavaFqName» instance) {
       return «builderBuilderName».use(instance);
     }
+    «IF isNullCheck»
+        public static final «builderBuilderName» use«name»(«modelJavaFqName» instance, boolean nullCheck) {
+          return «builderBuilderName».use(instance, nullCheck);
+        }
+    «ENDIF»
    '''
 
 

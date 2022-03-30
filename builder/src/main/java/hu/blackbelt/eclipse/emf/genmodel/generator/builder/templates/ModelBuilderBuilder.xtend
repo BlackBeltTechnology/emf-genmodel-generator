@@ -52,6 +52,7 @@ class ModelBuilderBuilder {
 		 	«ENDFOR»
 		
 		 	// helper attributes
+		 	private boolean m_nullCheck = «builderConfig.nullCheckByDefault»;
 		 	«FOR struct : structuralFeatures»
 		 		«struct.assignmentHelperDeclaration»
 		 	«ENDFOR»
@@ -87,6 +88,12 @@ class ModelBuilderBuilder {
 			 	«FOR multi : multipleStructuralFeatures»
 			 		«multi.assignFeatureMulti("_instance")»
 			 	«ENDFOR»
+                «FOR unary : unaryMandatoryStructuralFeatures»
+                    «unary.checkMandatoryFeature(it, "_instance")»
+                «ENDFOR»
+                «FOR multi : multipleMandatoryStructuralFeatures»
+                    «multi.checkMandatoryFeatureMulti(it, "_instance")»
+                «ENDFOR»
 		    	return _instance;
 			}
 
@@ -113,6 +120,14 @@ class ModelBuilderBuilder {
 		    public static «builderBuilderName()» create() {
 		        return new «builderBuilderName()»();
 		    }
+		
+		    /**
+		     * This method creates a new instance of the «builderBuilderName()» with mandatory field check if nullCheck is true.
+		     * @return new instance of the «builderBuilderName()»
+		     */
+		    public static «builderBuilderName()» create(boolean p_nullCheck) {
+		        return new «builderBuilderName()»().withNullCheck(p_nullCheck);
+		    }
 
 		    /**
 		     * This method creates a new instance of the «builderBuilderName()» from the given instance of class.
@@ -122,6 +137,18 @@ class ModelBuilderBuilder {
 		        return new «builderBuilderName()»(instance);
 		    }
 
+		    /**
+		     * This method creates a new instance of the «builderBuilderName()» from the given instance of class with mandatory field check if nullCheck is true.
+		     * @return new instance of the «builderBuilderName()»
+		     */
+		    public static «builderBuilderName()» use(«modelJavaFqName» instance, boolean p_nullCheck) {
+		        return new «builderBuilderName()»(instance).withNullCheck(p_nullCheck);
+		    }
+
+		    private «builderBuilderName()» withNullCheck(boolean p_nullCheck){
+		        m_nullCheck = p_nullCheck;
+		        return this;
+		    }
 
 		 	«FOR unary : unaryStructuralFeatures»
 		 		«unary.method(it)»
@@ -230,6 +257,18 @@ class ModelBuilderBuilder {
 		}
 		«ENDIF»
 		''' 
+		
+    def checkMandatoryFeature(GenFeature it, GenClass p_context, String p_var) '''
+        if (m_nullCheck && «p_var».get«potentiallyPluralizedName().toFirstUpper()»() == null) {
+            throw new IllegalArgumentException("Mandatory \"«safeName()»\" attribute is missing from «p_context.builderBuilderName()».");
+        }
+        ''' 
+        
+    def checkMandatoryFeatureMulti(GenFeature it, GenClass p_context, String p_var) '''
+        if (m_nullCheck && «p_var».get«potentiallyPluralizedName().toFirstUpper()»().isEmpty()) {
+            throw new IllegalArgumentException("Mandatory \"«safeName()»\" list cannot be empty in «p_context.builderBuilderName()».");
+        }
+        '''
 
 	// extension to calculate the name of the feature access method
 	def featureAccessMethod(GenFeature it) {

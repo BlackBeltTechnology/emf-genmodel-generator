@@ -3,6 +3,7 @@ module hu.blackbelt.eclipse.emf.genmodel.generator.builder.BuilderGenerator
 var modelDir = "model"
 var javaGenPath = "src-gen"
 var featureModifierMethodPrefix = "with"
+var nullCheckByDefault = false
 
 Workflow {	
 
@@ -10,6 +11,7 @@ Workflow {
 			config = {
 				javaGenPath = javaGenPath
 				featureModifierMethodPrefix = featureModifierMethodPrefix
+				nullCheckByDefault = nullCheckByDefault
 			}
 			doInit = true
 		}
