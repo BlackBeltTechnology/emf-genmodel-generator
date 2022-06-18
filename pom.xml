@@ -287,6 +287,17 @@
                     </executions>
                 </plugin>
 
+				<plugin>
+					<groupId>org.eclipse.tycho</groupId>
+					<artifactId>tycho-packaging-plugin</artifactId>
+					<version>${tycho-version}</version>
+					<configuration>
+						<!-- required to have valid consumable Maven artifacts
+						https://github.com/eclipse/tycho/issues/781 -->
+						<skipPomGeneration>true</skipPomGeneration>
+					</configuration>
+				</plugin>
+
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
