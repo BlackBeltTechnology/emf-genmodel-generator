@@ -115,8 +115,8 @@ jobs:
         run: |-
           ./mvnw -B -Dstyle.color=always \
           -Dtycho.mode=maven \
+          -DskipModules \
           -P update-category-versions \
-          -f ./site/pom.xml \
           validate
 
       - name: Set tycho version
