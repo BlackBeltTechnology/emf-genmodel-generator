@@ -705,7 +705,7 @@
                                 </goals>
                                 <phase>process-sources</phase>
                                 <configuration>
-                                    <licenseName>apache_v2</licenseName>
+                                    <licenseName>epl_v2</licenseName>
                                     <roots>
                                         <root>src/main/java</root>
                                         <root>src/test</root>
