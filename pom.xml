@@ -707,8 +707,7 @@
                                 <configuration>
                                     <licenseName>epl_v2</licenseName>
                                     <roots>
-                                        <root>src/main/java</root>
-                                        <root>src/test</root>
+                                        <root>src</root>
                                     </roots>
                                 </configuration>
                             </execution>
