@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: %pluginName
+Bundle-Name: EMF Genmodel Generator ECore
 Bundle-SymbolicName: hu.blackbelt.eclipse.emf.genmodel.generator.ecore;singleton:=true
 Bundle-Version: 1.0.2.qualifier
 Bundle-ClassPath: .
-Bundle-Vendor: %providerName
+Bundle-Vendor: BlackBelt Technology
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Require-Bundle: org.eclipse.emf.ecore;visibility:=reexport,

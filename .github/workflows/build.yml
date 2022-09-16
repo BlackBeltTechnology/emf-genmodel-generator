@@ -85,7 +85,7 @@ jobs:
             BASE_VERSION=${POM_VERSION}
           fi
           if [[ "${{ github.base_ref }}" == "master" ]]; then
-            VERSION_NUMBER=${BASE_VERSION}
+            VERSION_NUMBER=${BASE_VERSION}.$(date +%Y%m%d_%H%M%S)
           else
             TAG_NAME=$(echo "${{ steps.context.outputs.branch }}" | cut -d ' ' -f2 | tr '#\/\.-' '_')
             VERSION_NUMBER=${BASE_VERSION}.$(date +%Y%m%d_%H%M%S)_${{ steps.context.outputs.shortCommitId }}_${TAG_NAME//[(\)]}
