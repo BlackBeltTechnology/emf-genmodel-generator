@@ -1,11 +1,11 @@
 package hu.blackbelt.eclipse.emf.genmodel.generator.helper
 
-import hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine.ModelHelperGeneratorStandaloneSetup
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.generator.GeneratorComponent.Outlet
 import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
 import org.eclipse.emf.mwe2.runtime.workflow.AbstractCompositeWorkflowComponent
 import hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine.HelperGeneratorConfig
+import hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine.ModelHelperGeneratorStandaloneSetup
 
 @Accessors
 class HelperGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
@@ -14,7 +14,8 @@ class HelperGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
 	String modelDir
 	String slot = "helperGenerator"
 	Boolean generateUuid = true;
-	
+	Boolean printXmlOnError = false;
+
 	override preInvoke() {
 		val slotEntry = new ResourceLoadingSlotEntry() => [
 			setSlot(slot)
@@ -23,6 +24,7 @@ class HelperGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
 		val config = new HelperGeneratorConfig() => [
 			setJavaGenPath(javaGenPath)
 			setGenerateUuid(generateUuid)
+			setPrintXmlOnError(printXmlOnError)
 		]
 		
 		val setup = new ModelHelperGeneratorStandaloneSetup() => [

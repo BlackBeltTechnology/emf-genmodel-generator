@@ -1062,9 +1062,13 @@ class ModelResourceSupport implements IGenerator {
 				«modelName»ModelResourceSupport «modelName.decapitalize»ModelResourceSupport;
 		
 				«modelName»ValidationException(«modelName»ModelResourceSupport «modelName.decapitalize»ModelResourceSupport) {
-					super("Invalid model\n" +
-							«modelName.decapitalize»ModelResourceSupport.getDiagnosticsAsString() + "\n" + «modelName.decapitalize»ModelResourceSupport.asString()
-					);
+					«IF config.printXmlOnError»
+						super("Invalid model\n" +
+								«modelName.decapitalize»ModelResourceSupport.getDiagnosticsAsString() + "\n" +
+								«modelName.decapitalize»ModelResourceSupport.asString());
+					«ELSE»
+						super("Invalid model\n" + «modelName.decapitalize»ModelResourceSupport.getDiagnosticsAsString());
+					«ENDIF»
 					this.«modelName.decapitalize»ModelResourceSupport = «modelName.decapitalize»ModelResourceSupport;
 				}
 		
