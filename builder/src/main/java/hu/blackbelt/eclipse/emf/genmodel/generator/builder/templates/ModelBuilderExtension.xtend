@@ -9,8 +9,21 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.codegen.util.CodeGenUtil
 import org.eclipse.emf.ecore.EClassifier
 import org.eclipse.emf.ecore.EClass
+import org.eclipse.emf.ecore.EDataType
+import org.eclipse.emf.ecore.EcorePackage
 
 class ModelBuilderExtension {
+    
+    protected static final val String[] PRIMITIVES = #{
+        "boolean",
+        "byte",
+        "char",
+        "double",
+        "float",
+        "int",
+        "long",
+        "short"
+    }
 			
 	def packageName (GenModel it) {
 		genPackages.get(0).basePackage + "." + genPackages.get(0).packageName;
@@ -196,6 +209,14 @@ class ModelBuilderExtension {
 	def multipleStructuralFeatures(GenClass it) {
 	    structuralFeatures.filter[isMulti]
 	}
+	
+	def unaryMandatoryStructuralFeatures(GenClass it) {
+	    structuralFeatures.filter[isMandatory && !isMulti]
+	}
+	
+	def multipleMandatoryStructuralFeatures(GenClass it) {
+        structuralFeatures.filter[isMandatory && isMulti]
+    }
 
 	// an extension to decide whether the structural feature is a list
 	def isMulti(GenFeature it) {		
@@ -223,6 +244,18 @@ class ModelBuilderExtension {
 
   	def factoryInstanceFqName(GenClass it) {
     	genPackage.packageFqName + "." + factoryInstance
+  	}
+  	
+  	def isMandatory(GenFeature it) {
+        !isPrimitive && ecoreFeature.lowerBound > 0 && (ecoreFeature.defaultValueLiteral.isNullOrEmpty && ecoreFeature.defaultValue == null)
+  	}
+  	
+  	def isNullCheck(GenClass it) {
+        structuralFeatures.findFirst[isMandatory] != null
+  	}
+  	
+  	def isPrimitive(GenFeature it) {
+  	    PRIMITIVES.contains(ecoreFeature.EType.instanceClassName)
   	}
   	  	
 }

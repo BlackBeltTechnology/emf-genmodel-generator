@@ -53,3 +53,4 @@ local.properties
 **/.DS_Store
 wercker.env
 /**/.wercker
+.release
