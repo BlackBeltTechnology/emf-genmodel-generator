@@ -1,0 +1,24 @@
+= emf-genmodel-generator
+
+image::https://github.com/BlackBeltTechnology/emf-genmodel-generator/actions/workflows/build.yml/badge.svg?branch=develop[link="https://github.com/BlackBeltTechnology/emf-genmodel-generator/actions/workflows/build.yml" float="center"]
+
+Generator for EMF Modeld. It can generate Helpers, builders utils.
+
+It acts as an eclipse plugin with features and sites.
+
+== Modules:
+
+- emf-genmodel-generator - eclipse plugin. It wrapes execution engine.
+
+- feature - Eclipse feature repository - to be able to use for eclipse installation
+
+- site - Eclipse Update Site - all built version compiled as an update site.
+
+== Contributing to the project
+
+Everyone is welcome to contribute to emf-genmodel-generator! As a starter, please read the corresponding link:CONTRIBUTING.adoc[CONTRIBUTING] guide for details!
+
+
+== License
+
+This project is licensed under the https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt[Eclipse Public License 2.0].
