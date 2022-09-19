@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: EMF GenModel Generator Helper
 Bundle-SymbolicName: hu.blackbelt.eclipse.emf.genmodel.generator.helper
-Bundle-Version: 1.0.2.qualifier
+Bundle-Version: 1.0.3.qualifier
 Bundle-Vendor: BlackBelt Technology
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: hu.blackbelt.eclipse.emf.genmodel.generator.helper,
