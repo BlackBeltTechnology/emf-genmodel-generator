@@ -86,9 +86,32 @@ jobs:
           echo "Building version: ${VERSION_NUMBER}"
           echo "::set-output name=version::${VERSION_NUMBER}"
 
-##########################
-# MAVEN BUILD START
-##########################
+      ##########################
+      # MAVEN BUILD START
+      ##########################
+      # Prepare version number
+      - name: 🚧 Set project version
+        run: |-
+          ./mvnw -B -Dstyle.color=always \
+          -DnewVersion=${{ steps.version.outputs.version }} \
+          -DgenerateBackupPoms=false \
+          -Dtycho.mode=maven \
+          versions:set
+
+      - name: 🚧 Update target definition
+        run: |-
+          ./mvnw -B -Dstyle.color=always \
+          -Dtycho.mode=maven  \
+          -P update-target-versions \
+          -f ./targetdefinition/pom.xml \
+          install
+
+      - name: 🚧 Set tycho version
+        run: |-
+          ./mvnw -B -Dstyle.color=always \
+          -Dtycho.mode=maven  \
+          -P update-category-versions \
+          tycho-versions:update-eclipse-metadata
 
       - name: 🔥 Build with Maven (build, test)
         run: |-
