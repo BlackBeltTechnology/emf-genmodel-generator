@@ -142,6 +142,9 @@ jobs:
 
       - name: Set next version
         run: |-
+          mvn tycho-versions:set-version -DnewVersion=${{ steps.next_version.outputs.version }} -Dtycho.mode=maven
+          mvn tycho-versions:update-eclipse-metadata -Dtycho.mode=maven
+          git ls-files | grep pom.xml | xargs git restore --
           ./mvnw versions:set-property -Dproperty=revision -DnewVersion=${{ steps.next_version.outputs.version }} -Dtycho.mode=maven -DskipModules=true
 
       - name: ⬆️ Create Pull Request for increased version into develop
