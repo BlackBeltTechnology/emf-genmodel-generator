@@ -2,7 +2,7 @@
 <feature
       id="hu.blackbelt.eclipse.emf.genmodel.generator.feature"
       label="EMF GenModel based generator"
-      version="1.1.0.qualifier"
+      version="1.1.0"
       provider-name="BlackBelt Technology">
 
    <description url="https://github.com/BlackBeltTechnology/emf-genmodel-generator">
