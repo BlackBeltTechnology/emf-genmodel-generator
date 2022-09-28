@@ -54,3 +54,5 @@ local.properties
 wercker.env
 /**/.wercker
 .release
+/**/.flattened-pom.xml
+
