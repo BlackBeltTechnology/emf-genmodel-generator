@@ -107,19 +107,10 @@ jobs:
           -Dtycho.mode=maven \
           tycho-versions:set-version
 
-      - name: 🚧 Update target definition
-        run: |-
-          ./mvnw -B -Dstyle.color=always \
-          -Dtycho.mode=maven  \
-          -P update-target-versions \
-          -f ./targetdefinition/pom.xml \
-          install
-
       - name: 🚧 Set tycho version
         run: |-
           ./mvnw -B -Dstyle.color=always \
           -Dtycho.mode=maven  \
-          -P update-category-versions \
           tycho-versions:update-eclipse-metadata
 
       # Phase 1 - Build and deploy to judong nexus
