@@ -174,15 +174,6 @@
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho-version}</version>
                 <configuration>
-                    <!--
-                    <target>
-                        <artifact>
-                            <groupId>hu.blackbelt.eclipse</groupId>
-                            <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator.targetdefinition</artifactId>
-                            <version>${project.version}</version>
-                        </artifact>
-                    </target>
-                    -->
                     <environments>
                         <environment>
                             <os>linux</os>
@@ -502,7 +493,6 @@
                 </property>
             </activation>
             <modules>
-                <module>targetdefinition</module>
                 <module>core</module>
                 <module>helper</module>
                 <module>builder</module>
