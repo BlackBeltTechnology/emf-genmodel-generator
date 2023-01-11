@@ -22,3 +22,4 @@ Everyone is welcome to contribute to emf-genmodel-generator! As a starter, pleas
 == License
 
 This project is licensed under the https://www.eclipse.org/org/documents/epl-2.0/EPL-2.0.txt[Eclipse Public License 2.0].
+
