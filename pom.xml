@@ -76,6 +76,20 @@
         </developer>
     </developers>
 
+    <repositories>
+        <repository>
+            <id>eclipse-licenser</id>
+            <url>https://download.eclipse.org/cbi/updates/license</url>
+            <layout>p2</layout>
+        </repository>
+
+        <repository>
+            <id>eclipse-release</id>
+            <url>https://download.eclipse.org/releases/2022-12</url>
+            <layout>p2</layout>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -160,13 +174,6 @@
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho-version}</version>
                 <configuration>
-                    <target>
-                        <artifact>
-                            <groupId>hu.blackbelt.eclipse</groupId>
-                            <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator.targetdefinition</artifactId>
-                            <version>${project.version}</version>
-                        </artifact>
-                    </target>
                     <environments>
                         <environment>
                             <os>linux</os>
@@ -486,7 +493,6 @@
                 </property>
             </activation>
             <modules>
-                <module>targetdefinition</module>
                 <module>core</module>
                 <module>helper</module>
                 <module>builder</module>
