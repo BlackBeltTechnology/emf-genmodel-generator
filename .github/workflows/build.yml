@@ -99,15 +99,6 @@ jobs:
       # MAVEN BUILD START
       ##########################
 
-      # Prepare version number
-      - name: 🚧 Set project version
-        run: |-
-          ./mvnw -B -Dstyle.color=always \
-          -DnewVersion=${{ steps.version.outputs.version }} \
-          -DgenerateBackupPoms=false \
-          -Dtycho.mode=maven \
-          tycho-versions:set-version
-
       - name: 🚧 Set tycho version
         run: |-
           ./mvnw -B -Dstyle.color=always \
