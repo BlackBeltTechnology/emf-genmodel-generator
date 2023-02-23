@@ -99,6 +99,21 @@ jobs:
       # MAVEN BUILD START
       ##########################
 
+      # Prepare version number
+      - name: 🚧 Set project version
+        run: |-
+          ./mvnw -B -Dstyle.color=always \
+          -DnewVersion=${{ steps.version.outputs.version }} \
+          -DgenerateBackupPoms=false \
+          -Dtycho.mode=maven \
+          tycho-versions:set-version
+
+      - name: 🚧 Set tycho version
+        run: |-
+          ./mvnw -B -Dstyle.color=always \
+          -Dtycho.mode=maven  \
+          tycho-versions:update-eclipse-metadata
+
       # Phase 1 - Build and deploy to judong nexus
       - name: 🔥 Build with Maven (build, test)
         run: |-
