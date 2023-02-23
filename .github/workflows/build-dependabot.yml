@@ -97,6 +97,7 @@ jobs:
           -DgenerateBackupPoms=false \
           -Dtycho.mode=maven \
           versions:set
+          
       - name: 🚧 Set tycho version
         run: |-
           ./mvnw -B -Dstyle.color=always \
