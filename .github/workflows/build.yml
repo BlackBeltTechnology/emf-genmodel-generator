@@ -219,5 +219,5 @@ jobs:
         if: always()
         with:
           webhook: ${{ secrets.JUDONG_DISCORD_WEBHOOK }}
-          title: "Gitub action"
+          title: "Github action"
           description: "${{ steps.message.outputs.message }}"

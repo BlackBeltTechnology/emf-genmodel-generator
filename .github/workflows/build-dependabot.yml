@@ -97,7 +97,7 @@ jobs:
           -DgenerateBackupPoms=false \
           -Dtycho.mode=maven \
           versions:set
-          
+
       - name: 🚧 Set tycho version
         run: |-
           ./mvnw -B -Dstyle.color=always \
@@ -131,5 +131,5 @@ jobs:
         if: always()
         with:
           webhook: ${{ secrets.JUDONG_DISCORD_WEBHOOK }}
-          title: "Gitub action"
+          title: "Github action"
           description: "${{ steps.message.outputs.message }}"

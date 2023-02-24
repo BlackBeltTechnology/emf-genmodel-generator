@@ -98,5 +98,5 @@ jobs:
         if: ${{ always() && job.status == 'failure' }}
         with:
           webhook: ${{ secrets.JUDONG_DISCORD_WEBHOOK }}
-          title: "Gitub action"
+          title: "Github action"
           description: ":x: Could not trigger github release! https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
