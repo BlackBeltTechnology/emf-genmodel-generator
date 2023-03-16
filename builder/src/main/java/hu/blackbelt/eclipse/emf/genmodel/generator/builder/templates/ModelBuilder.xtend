@@ -7,17 +7,17 @@ import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 
 class ModelBuilder implements IGenerator {
-	@Inject ModelBuilderFacade modelBuilderFacade
-	@Inject ModelBuilderInterface modelBuilderInterface
+    @Inject ModelBuilderFacade modelBuilderFacade
+    @Inject ModelBuilderInterface modelBuilderInterface
 
-	// add more templates here
-	
-	override doGenerate(Resource input, IFileSystemAccess fsa) {
-		
-		input.allContents.filter(GenModel).forEach[
-			modelBuilderFacade.doGenerate(it, input, fsa)
-			modelBuilderInterface.doGenerate(it, input, fsa)
-		]
+    // add more templates here
 
-	}	
+    override doGenerate(Resource input, IFileSystemAccess fsa) {
+
+        input.allContents.filter(GenModel).forEach[
+            modelBuilderFacade.doGenerate(it, input, fsa)
+            modelBuilderInterface.doGenerate(it, input, fsa)
+        ]
+
+    }
 }

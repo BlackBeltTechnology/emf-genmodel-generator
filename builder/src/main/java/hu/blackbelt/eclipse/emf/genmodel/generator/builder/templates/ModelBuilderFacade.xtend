@@ -8,42 +8,42 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.ecore.resource.Resource
 
 class ModelBuilderFacade {
-	@Inject extension ModelBuilderExtension
-	@Inject ModelBuilderBuilder modelBuilderBuilder
-	
-	def doGenerate(GenModel genModel, Resource input, IFileSystemAccess fsa) {		
-		genModel.allGenPackagesWithConcreteClasses
-		.forEach[
-		    val facade = generateBuilderFacade
-		    fsa.generateFile(builderFacadeFileName, facade)
-		    genClasses
-		    .filter[isNonAbstractBuilderType]
-		    .forEach[
-		    	modelBuilderBuilder.doGenerate(it, input, fsa)
-		    ]			
-		]
-	}
+    @Inject extension ModelBuilderExtension
+    @Inject ModelBuilderBuilder modelBuilderBuilder
 
-	def generateBuilderFacade (GenPackage it) 
-	'''
-	package «builderFacadePackage»;
+    def doGenerate(GenModel genModel, Resource input, IFileSystemAccess fsa) {
+        genModel.allGenPackagesWithConcreteClasses
+        .forEach[
+            val facade = generateBuilderFacade
+            fsa.generateFile(builderFacadeFileName, facade)
+            genClasses
+            .filter[isNonAbstractBuilderType]
+            .forEach[
+                modelBuilderBuilder.doGenerate(it, input, fsa)
+            ]
+        ]
+    }
 
-	/**
-	 * <!-- begin-user-doc --> 
-	 *   A facade for the builders for the EMF package ' <em><b>«getEcorePackage.nsURI»</b></em>'.
-	 * <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	 
-	 public class «builderFacadeName» {
-		«FOR cl : genClasses.filter[isNonAbstractBuilderType]»
-			«builderAccessMethod(cl)»
-			«decoratorAccessMethod(cl)»
-		«ENDFOR»
-	}
+    def generateBuilderFacade (GenPackage it)
     '''
-    
+    package «builderFacadePackage»;
+
+    /**
+     * <!-- begin-user-doc -->
+     *   A facade for the builders for the EMF package ' <em><b>«getEcorePackage.nsURI»</b></em>'.
+     * <!-- end-user-doc -->
+     *
+     * @generated
+     */
+
+     public class «builderFacadeName» {
+        «FOR cl : genClasses.filter[isNonAbstractBuilderType]»
+            «builderAccessMethod(cl)»
+            «decoratorAccessMethod(cl)»
+        «ENDFOR»
+    }
+    '''
+
    def builderAccessMethod(GenClass it)
    '''
     public static final «builderBuilderName» new«builderBuilderName»() {
@@ -55,7 +55,7 @@ class ModelBuilderFacade {
         }
     «ENDIF»
    '''
-   
+
    def decoratorAccessMethod(GenClass it)
    '''
     public static final «builderBuilderName» use«name»(«modelJavaFqName» instance) {

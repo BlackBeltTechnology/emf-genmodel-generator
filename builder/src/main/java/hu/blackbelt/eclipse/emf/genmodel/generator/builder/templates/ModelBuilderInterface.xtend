@@ -7,27 +7,27 @@ import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.ecore.resource.Resource
 
 class ModelBuilderInterface {
-	@Inject extension ModelBuilderExtension
+    @Inject extension ModelBuilderExtension
 
-	def doGenerate(GenModel genModel, Resource input, IFileSystemAccess fsa) {		
-		genModel.allGenPackagesWithConcreteClasses.forEach[
-		    val facade = generateBuilderInterface
-		    fsa.generateFile(builderInterfaceFileName, facade)
-		]
-	}
+    def doGenerate(GenModel genModel, Resource input, IFileSystemAccess fsa) {
+        genModel.allGenPackagesWithConcreteClasses.forEach[
+            val facade = generateBuilderInterface
+            fsa.generateFile(builderInterfaceFileName, facade)
+        ]
+    }
 
-	def generateBuilderInterface (GenPackage it) 
-	'''
-	package «builderInterfacePackage»;
-	/**
-	 * <!-- begin-user-doc --> 
-	 *   A marker interface for the builders of the EMF package ' <em><b>«getEcorePackage.nsURI»</b></em>'.
-	 * <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public interface «builderInterfaceName()»<T extends org.eclipse.emf.ecore.EObject> {
-		public T build();
-	}
+    def generateBuilderInterface (GenPackage it)
+    '''
+    package «builderInterfacePackage»;
+    /**
+     * <!-- begin-user-doc -->
+     *   A marker interface for the builders of the EMF package ' <em><b>«getEcorePackage.nsURI»</b></em>'.
+     * <!-- end-user-doc -->
+     *
+     * @generated
+     */
+    public interface «builderInterfaceName()»<T extends org.eclipse.emf.ecore.EObject> {
+        public T build();
+    }
     '''
 }
