@@ -9,13 +9,13 @@ package hu.blackbelt.eclipse.emf.genmodel.generator.builder.templates;
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0.
- * 
+ *
  * This Source Code may also be made available under the following Secondary
  * Licenses when the conditions for such availability set forth in the Eclipse
  * Public License, v. 2.0 are satisfied: GNU General Public License, version 2
  * with the GNU Classpath Exception which is
  * available at https://www.gnu.org/software/classpath/license.html.
- * 
+ *
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  * #L%
  */
@@ -36,7 +36,7 @@ import com.google.common.collect.ImmutableList;
 
 public class JavaExtensions {
   private List<GenModel> s_genModels;
-  
+
   public JavaExtensions(List<GenModel> p_genModels) {
     s_genModels = ImmutableList.copyOf(p_genModels);
   }
@@ -89,11 +89,11 @@ public class JavaExtensions {
   private final GenPackage findGenPackageFor(final EPackage p_package) {
     return findGenPackageFor(p_package, p_package);
   }
-  
+
   private final GenPackage findGenPackageFor(final EClassifier p_classifier) {
     return findGenPackageFor(p_classifier, p_classifier.getEPackage());
   }
-  
+
   private final GenPackage findGenPackageFor(final EObject p_element, final EPackage p_package) {
     final StringBuilder sb = new StringBuilder();
     for (final GenModel genModel : s_genModels) {
@@ -114,7 +114,7 @@ public class JavaExtensions {
     }
     throw new RuntimeException("Did not find genpackage for '" + p_element + " using genmodels " + sb.toString() + ".");
   }
-  
+
 
   private final List<GenPackage> getPackagesRecursively(List<GenPackage> list) {
     List<GenPackage> resultList = new BasicEList<GenPackage>();
