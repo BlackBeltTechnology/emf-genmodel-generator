@@ -5,6 +5,6 @@ import hu.blackbelt.eclipse.emf.genmodel.generator.core.engine.GeneratorConfig
 
 @Accessors
 class BuilderConfig extends GeneratorConfig {
-	String featureModifierMethodPrefix = "with"
-	boolean nullCheckByDefault = false
+    String featureModifierMethodPrefix = "with"
+    boolean nullCheckByDefault = false
 }
