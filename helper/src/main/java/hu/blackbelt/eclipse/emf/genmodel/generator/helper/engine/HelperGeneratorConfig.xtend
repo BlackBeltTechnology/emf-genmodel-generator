@@ -5,5 +5,5 @@ import hu.blackbelt.eclipse.emf.genmodel.generator.core.engine.GeneratorConfig
 
 @Accessors
 class HelperGeneratorConfig extends GeneratorConfig {
-	Boolean generateUuid = true;
+    Boolean generateUuid = true;
 }
