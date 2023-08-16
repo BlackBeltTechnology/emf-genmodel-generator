@@ -4,7 +4,7 @@ Bundle-Name: EMF Genmodel Generator Builder
 Bundle-SymbolicName: hu.blackbelt.eclipse.emf.genmodel.generator.builder
 Bundle-Version: 1.1.1.qualifier
 Bundle-Vendor: BlackBelt Technology
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: hu.blackbelt.eclipse.emf.genmodel.generator.builder,
  hu.blackbelt.eclipse.emf.genmodel.generator.builder.engine,
  hu.blackbelt.eclipse.emf.genmodel.generator.builder.templates

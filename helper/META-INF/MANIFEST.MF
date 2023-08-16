@@ -4,7 +4,7 @@ Bundle-Name: EMF GenModel Generator Helper
 Bundle-SymbolicName: hu.blackbelt.eclipse.emf.genmodel.generator.helper
 Bundle-Version: 1.1.1.qualifier
 Bundle-Vendor: BlackBelt Technology
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: hu.blackbelt.eclipse.emf.genmodel.generator.helper,
  hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine,
  hu.blackbelt.eclipse.emf.genmodel.generator.helper.templates

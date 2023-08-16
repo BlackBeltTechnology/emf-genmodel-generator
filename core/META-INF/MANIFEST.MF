@@ -4,7 +4,7 @@ Bundle-Name: EMF Genmodel Generator Core
 Bundle-SymbolicName: hu.blackbelt.eclipse.emf.genmodel.generator.core
 Bundle-Version: 1.1.1.qualifier
 Bundle-Vendor: BlackBelt Technology
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Export-Package: hu.blackbelt.eclipse.emf.genmodel.generator.core.engine,
  hu.blackbelt.eclipse.emf.genmodel.generator.core.validation
 Bundle-ActivationPolicy: lazy
