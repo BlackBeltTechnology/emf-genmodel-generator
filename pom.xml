@@ -33,9 +33,10 @@
     <properties>
         <maven>3.9.4</maven>
         <revision>1.1.1-SNAPSHOT</revision>
+        <qualifier>-SNAPSHOT</qualifier>
         <project-shortname>emf-genmodel-generator</project-shortname>
         <project-repositoryId>BlackBeltTechnology/emf-genmodel-generator</project-repositoryId>
-        <tycho-version>4.0.1</tycho-version>
+        <tycho-version>4.0.2</tycho-version>
         <build.qualifier>'v'yyyyMMddHHmm</build.qualifier>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
@@ -102,7 +103,7 @@
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>1.2.11</version>
+                <version>1.4.11</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
