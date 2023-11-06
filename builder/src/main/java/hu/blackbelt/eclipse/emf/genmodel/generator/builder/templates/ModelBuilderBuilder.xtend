@@ -1,6 +1,6 @@
 package hu.blackbelt.eclipse.emf.genmodel.generator.builder.templates;
 
-import javax.inject.Inject
+import com.google.inject.Inject
 import org.eclipse.xtext.generator.IFileSystemAccess
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import org.eclipse.emf.codegen.ecore.genmodel.GenClassifier
