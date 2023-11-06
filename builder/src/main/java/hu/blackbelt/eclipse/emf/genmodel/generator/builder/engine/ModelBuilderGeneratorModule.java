@@ -20,14 +20,14 @@ package hu.blackbelt.eclipse.emf.genmodel.generator.builder.engine;
  * #L%
  */
 
-import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.generator.IGenerator2;
 
 import hu.blackbelt.eclipse.emf.genmodel.generator.core.engine.AbstractGenModelGeneratorModule;
 import hu.blackbelt.eclipse.emf.genmodel.generator.builder.templates.ModelBuilder;
 
 public class ModelBuilderGeneratorModule extends AbstractGenModelGeneratorModule {
 
-    public Class<? extends IGenerator> bindIGenerator() {
+    public Class<? extends IGenerator2> bindIGenerator2() {
         return ModelBuilder.class;
     }
 }

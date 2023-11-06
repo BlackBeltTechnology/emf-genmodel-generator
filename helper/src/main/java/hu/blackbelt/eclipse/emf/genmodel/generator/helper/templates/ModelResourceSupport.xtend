@@ -1,17 +1,16 @@
 package hu.blackbelt.eclipse.emf.genmodel.generator.helper.templates;
 
-import javax.inject.Inject
+import com.google.inject.Inject
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.IFileSystemAccess
-import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import hu.blackbelt.eclipse.emf.genmodel.generator.helper.engine.HelperGeneratorConfig
 
-class ModelResourceSupport implements IGenerator {
+class ModelResourceSupport {
     @Inject extension Naming
     @Inject HelperGeneratorConfig config;
 
-    override doGenerate(Resource input, IFileSystemAccess fsa) {
+    def doGenerate(Resource input, IFileSystemAccess fsa) {
         input.allContents.filter(GenModel).forEach[
             val content = generate
             fsa.generateFile(packagePath + "/support/" + modelName + "ModelResourceSupport.java", content)

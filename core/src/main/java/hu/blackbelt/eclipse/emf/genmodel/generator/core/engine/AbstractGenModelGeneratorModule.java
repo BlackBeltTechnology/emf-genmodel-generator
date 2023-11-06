@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.xtext.generator.IGenerator;
+import org.eclipse.xtext.generator.IGenerator2;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.naming.DefaultDeclarativeQualifiedNameProvider;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
@@ -72,7 +73,7 @@ public abstract class AbstractGenModelGeneratorModule extends AbstractGenericRes
         return BasicConstraints.class;
     }
 
-    public abstract Class<? extends IGenerator> bindIGenerator();
+    public abstract Class<? extends IGenerator2> bindIGenerator2();
 
     @SingletonBinding
     public Class<? extends IOutputConfigurationProvider> bindIOutputConfigurationProvider() {
