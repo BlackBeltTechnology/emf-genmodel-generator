@@ -36,7 +36,7 @@
         <qualifier>-SNAPSHOT</qualifier>
         <project-shortname>emf-genmodel-generator</project-shortname>
         <project-repositoryId>BlackBeltTechnology/emf-genmodel-generator</project-repositoryId>
-        <tycho-version>4.0.2</tycho-version>
+        <tycho-version>4.0.7</tycho-version>
         <build.qualifier>'v'yyyyMMddHHmm</build.qualifier>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
