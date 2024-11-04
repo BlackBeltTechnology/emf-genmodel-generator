@@ -43,10 +43,11 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <xtext-version>2.30.0</xtext-version>
-        <logback-version>1.5.12</logback-version>
+        <lombok-version>1.18.34</lombok-version>
 
         <!--suppress UnresolvedMavenProperty -->
         <logback-test-config>${maven.multiModuleProjectDirectory}/logback-test.xml</logback-test-config>
+        <logback-version>1.5.12</logback-version>
 
         <surefire-version>3.5.1</surefire-version>
         <pax-exam-version>4.13.5</pax-exam-version>
@@ -404,7 +405,7 @@
                         <dependency>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.24</version>
+                            <version>${lombok-version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
