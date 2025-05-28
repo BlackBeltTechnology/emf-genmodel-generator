@@ -36,13 +36,13 @@
         <qualifier>-SNAPSHOT</qualifier>
         <project-shortname>emf-genmodel-generator</project-shortname>
         <project-repositoryId>BlackBeltTechnology/emf-genmodel-generator</project-repositoryId>
-        <tycho-version>4.0.9</tycho-version>
+        <tycho-version>4.0.13</tycho-version>
         <build.qualifier>'v'yyyyMMddHHmm</build.qualifier>
         <maven.compiler.target>17</maven.compiler.target>
         <maven.compiler.source>17</maven.compiler.source>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <xtext-version>2.30.0</xtext-version>
+        <xtext-version>2.39.0</xtext-version>
         <lombok-version>1.18.34</lombok-version>
 
         <!--suppress UnresolvedMavenProperty -->
