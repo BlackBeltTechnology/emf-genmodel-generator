@@ -1,5 +1,8 @@
-<?xml version='1.0' encoding='utf-8'?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <groupId>hu.blackbelt.eclipse</groupId>
     <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator</artifactId>
@@ -94,7 +97,7 @@
             <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.39.0</url>
             <layout>p2</layout>
         </repository>
-    <repository><id>judong</id><url>https://repository.judo.technology/repository/maven-judong/</url><releases><enabled>true</enabled></releases><snapshots><enabled>false</enabled></snapshots></repository></repositories>
+    </repositories>
 
     <dependencyManagement>
         <dependencies>
@@ -479,7 +482,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore></ignore>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -498,7 +501,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore></ignore>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -517,7 +520,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore></ignore>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -536,7 +539,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore/>
+                                        <ignore></ignore>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -629,14 +632,14 @@
             <id>release-judong</id>
             <distributionManagement>
                 <snapshotRepository>
-                    <id>judong-distribution</id>
+                    <id>judong-nexus-distribution</id>
                     <!--suppress UnresolvedMavenProperty -->
-                    <url>https://repository.judo.technology/repository/maven-judong-upstream/</url>
+                    <url>https://nexus.judo.technology/repository/maven-judong-snapshots/</url>
                 </snapshotRepository>
                 <repository>
-                    <id>judong-distribution</id>
+                    <id>judong-nexus-distribution</id>
                     <!--suppress UnresolvedMavenProperty -->
-                    <url>https://repository.judo.technology/repository/maven-judong-upstream/</url>
+                    <url>https://nexus.judo.technology/repository/maven-judong-snapshots/</url>
                 </repository>
             </distributionManagement>
         </profile>
@@ -685,10 +688,10 @@
                                     <goal>upload</goal>
                                 </goals>
                                 <configuration>
-                                    <serverId>judong-distribution</serverId>
+                                    <serverId>judong-nexus-distribution</serverId>
                                     <fromDir>${basedir}/site/target/repository</fromDir>
                                     <includes>*/**</includes>
-                                    <url>dav:https://repository.judo.technology/repository/p2-judong/</url>
+                                    <url>dav:https://nexus.judo.technology/repository/p2-judong/</url>
                                     <toDir>${project-shortname}/${project.version}</toDir>
                                 </configuration>
                             </execution>
