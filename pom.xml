@@ -1,8 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project
-        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-        xmlns="http://maven.apache.org/POM/4.0.0"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version='1.0' encoding='utf-8'?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>hu.blackbelt.eclipse</groupId>
     <artifactId>hu.blackbelt.eclipse.emf.genmodel.generator</artifactId>
@@ -78,27 +75,33 @@
             <organizationUrl>http://www.blackbelt.hu</organizationUrl>
         </developer>
     </developers>
-
     <repositories>
         <repository>
             <id>eclipse-licenser</id>
             <url>https://download.eclipse.org/cbi/updates/license</url>
             <layout>p2</layout>
         </repository>
-
         <repository>
             <id>eclipse-release</id>
             <url>https://download.eclipse.org/releases/2025-03</url>
             <layout>p2</layout>
         </repository>
-
         <repository>
             <id>eclipse-xtext</id>
             <url>https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.39.0</url>
             <layout>p2</layout>
         </repository>
+        <repository>
+            <id>judong</id>
+            <url>https://repository.judo.technology/repository/maven-judong/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
     </repositories>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -482,7 +485,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -501,7 +504,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -520,7 +523,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -539,7 +542,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -632,14 +635,14 @@
             <id>release-judong</id>
             <distributionManagement>
                 <snapshotRepository>
-                    <id>judong-nexus-distribution</id>
+                    <id>judong-distribution</id>
                     <!--suppress UnresolvedMavenProperty -->
-                    <url>https://nexus.judo.technology/repository/maven-judong-snapshots/</url>
+                    <url>https://repository.judo.technology/repository/maven-judong-upstream/</url>
                 </snapshotRepository>
                 <repository>
-                    <id>judong-nexus-distribution</id>
+                    <id>judong-distribution</id>
                     <!--suppress UnresolvedMavenProperty -->
-                    <url>https://nexus.judo.technology/repository/maven-judong-snapshots/</url>
+                    <url>https://repository.judo.technology/repository/maven-judong-upstream/</url>
                 </repository>
             </distributionManagement>
         </profile>
@@ -688,10 +691,10 @@
                                     <goal>upload</goal>
                                 </goals>
                                 <configuration>
-                                    <serverId>judong-nexus-distribution</serverId>
+                                    <serverId>judong-distribution</serverId>
                                     <fromDir>${basedir}/site/target/repository</fromDir>
                                     <includes>*/**</includes>
-                                    <url>dav:https://nexus.judo.technology/repository/p2-judong/</url>
+                                    <url>dav:https://repository.judo.technology/repository/p2-judong/</url>
                                     <toDir>${project-shortname}/${project.version}</toDir>
                                 </configuration>
                             </execution>
