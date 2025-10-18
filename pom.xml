@@ -694,7 +694,7 @@
                                     <serverId>judong-distribution</serverId>
                                     <fromDir>${basedir}/site/target/repository</fromDir>
                                     <includes>*/**</includes>
-                                    <url>dav:https://repository.judo.technology/repository/p2-judong/</url>
+                                    <url>dav:https://repository.judo.technology/repository/p2-judong-upstream/</url>
                                     <toDir>${project-shortname}/${project.version}</toDir>
                                 </configuration>
                             </execution>
