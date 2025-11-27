@@ -56,6 +56,8 @@ class ModelBuilderBuilder {
              «FOR struct : structuralFeatures»
                  «struct.assignmentHelperDeclaration»
              «ENDFOR»
+            private static final org.eclipse.emf.ecore.EClass ECLASS = (org.eclipse.emf.ecore.EClass)
+                    «genPackage.packageFqName».«genPackage.packageInterfaceName».eINSTANCE.getEClassifier("«name»");
 
             /**
              * This method can be used to override attributes of the builder. It constructs a new builder and copies the current values to it.
@@ -157,10 +159,109 @@ class ModelBuilderBuilder {
              «FOR multi : multipleStructuralFeatures»
                  «multi.methodMulti(it)»
              «ENDFOR»
+            
+            public «builderBuilderName()» withStructuralFeatures(java.util.Map<String, Object> structuralFeatures) {
+                if (structuralFeatures == null || structuralFeatures.isEmpty()) {
+                    return this;
+                }
+                structuralFeatures.forEach(this::withStructuralFeature);
+                return this;
+            }
 
+            public «builderBuilderName()» withStructuralFeature(String featureName, Object rawValue) {
+                if (featureName == null) {
+                    return this;
+                }
+                String normalized = featureName.trim();
+                if (normalized.isEmpty()) {
+                    return this;
+                }
+                «IF !structuralFeatures.empty»
+                String key = normalized.toLowerCase(java.util.Locale.ROOT);
+                switch (key) {	
+                    «FOR feature : structuralFeatures»
+                        case "«feature.ecoreFeature.name.toLowerCase»":
+                            «IF feature.isMulti»
+                                applyMany("«feature.ecoreFeature.name»", rawValue, this::«feature.featureAccessMethod»);
+                            «ELSE»
+                                applySingle("«feature.ecoreFeature.name»", rawValue, this::«feature.featureAccessMethod»);
+                            «ENDIF»
+                            break;
+                    «ENDFOR»
+                    default:
+                        throw new IllegalArgumentException("Structural feature '" + featureName + "' is not supported for «modelJavaFqName».");
+                }
+                «ENDIF»
+                return this;
+            }
+            «IF !structuralFeatures.empty»
+            private void applySingle(String featureName, Object rawValue, java.util.function.Function<Object, «builderBuilderName()»> setter) {
+                org.eclipse.emf.ecore.EStructuralFeature feature = structuralFeature(featureName);
+                Object value = convertStructuralFeatureValue(feature, rawValue);
+                setter.apply(value);
+            }
+            
+            private org.eclipse.emf.ecore.EStructuralFeature structuralFeature(String featureName) {
+                if (featureName == null || featureName.isEmpty()) {
+                    throw new IllegalArgumentException("Feature name must be provided for «modelJavaFqName»." );
+                }
+                for (org.eclipse.emf.ecore.EStructuralFeature feature : ECLASS.getEAllStructuralFeatures()) {
+                    if (feature.getName().equals(featureName)) {
+                        return feature;
+                    }
+                }
+                throw new IllegalArgumentException("Feature '" + featureName + "' is not a structural feature of " + ECLASS.getName());
+            }
+            private Object convertStructuralFeatureValue(org.eclipse.emf.ecore.EStructuralFeature feature, Object rawValue) {
+                if (rawValue == null) {
+                    return null;
+                }
+                if (feature instanceof org.eclipse.emf.ecore.EAttribute attribute) {
+                    org.eclipse.emf.ecore.EDataType dataType = attribute.getEAttributeType();
+                    if (dataType == null) {
+                        return rawValue;
+                    }
+                    if (rawValue instanceof String stringValue) {
+                        return org.eclipse.emf.ecore.util.EcoreUtil.createFromString(dataType, stringValue);
+                    }
+                    return rawValue;
+                }
+                return rawValue;
+            }
+            «ENDIF»
+            «IF !multipleStructuralFeatures.empty»
+            private void applyMany(String featureName, Object rawValue, java.util.function.Function<Object, «builderBuilderName()»> setter) {
+                org.eclipse.emf.ecore.EStructuralFeature feature = structuralFeature(featureName);
+                for (Object token : convertStructuralFeatureValues(feature, rawValue)) {
+                    setter.apply(token);
+                }
+            }
+            
+            private java.util.List<Object> convertStructuralFeatureValues(org.eclipse.emf.ecore.EStructuralFeature feature, Object rawValue) {
+                java.util.List<Object> values = new java.util.ArrayList<>();
+                if (rawValue == null) {
+                    return values;
+                }
+                if (rawValue instanceof java.util.Collection<?> collection) {
+                    values.addAll(collection);
+                    return values;
+                }
+                if (rawValue instanceof String stringValue) {
+                    for (String token : stringValue.split(",")) {
+                        String trimmed = token.trim();
+                        if (!trimmed.isEmpty()) {
+                            values.add(convertStructuralFeatureValue(feature, trimmed));
+                    	}
+                 	}
+                    return values;
+                }
+                values.add(convertStructuralFeatureValue(feature, rawValue));
+                return values;
+             }
+        «ENDIF»            
         }
          '''
-
+        
     def typeDeclaration(GenFeature it) {
         if (typeGenClass !== null)
             typeDeclaration(typeGenClass)
@@ -284,6 +385,11 @@ class ModelBuilderBuilder {
             m_feature«safeName().toFirstUpper()»Set = true;
             return this;
         }
+
+        public «p_context.builderBuilderName» «featureAccessMethod»(Object p_«safeName()»){
+            return «featureAccessMethod»((«typeDeclaration») p_«safeName()»);
+        }
+
         «IF isBuilderType()»
             public «p_context.builderBuilderName()» «featureAccessMethod()»(«typeGenClassifier.builderInterfaceFqName»<? extends «typeGenClassifier.modelJavaFqName»> p_«p_context.builderBuilderName.toFirstLower()»){
                 m_feature«safeName().toFirstUpper()»Builder = p_«p_context.builderBuilderName().toFirstLower()»;
@@ -297,6 +403,10 @@ class ModelBuilderBuilder {
             m_«safeName()».add(p_«safeName()»);
             m_feature«safeName().toFirstUpper()»Set = true;
             return this;
+        }
+
+        public «p_context.builderBuilderName» «featureAccessMethod»(Object p_«safeName()»){
+            return «featureAccessMethod»((«typeDeclaration») p_«safeName()»);
         }
 
         public «p_context.builderBuilderName» «featureAccessMethod»(java.util.Collection<? extends «typeDeclaration»> p_«safeName()»){
