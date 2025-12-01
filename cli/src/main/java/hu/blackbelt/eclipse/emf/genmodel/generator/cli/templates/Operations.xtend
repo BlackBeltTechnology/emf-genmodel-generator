@@ -416,12 +416,14 @@ class Operations {
                 if (!attachToContainer(container, instance)) {
                     getModel().addContent(instance);
                 }
+                resolver.bind(getModel().getResourceSet());
                 
                 System.out.printf("create " + EOBJECT_TYPE);
                 working.forEach((key, value) -> System.out.printf(" --attr %s=%s", key, value));
                 if (containerFqn != null) {
                     System.out.printf(" --attr container=" + containerFqn);
                 }
+                System.out.println();
                 
                 return 0;
             } catch (Exception ex) {
