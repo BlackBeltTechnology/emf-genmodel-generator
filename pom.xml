@@ -585,6 +585,7 @@
                 </property>
             </activation>
             <modules>
+                <module>cli</module>
                 <module>core</module>
                 <module>helper</module>
                 <module>builder</module>
