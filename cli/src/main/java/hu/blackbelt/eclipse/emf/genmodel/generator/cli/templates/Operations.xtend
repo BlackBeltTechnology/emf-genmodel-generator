@@ -67,9 +67,8 @@ class Operations {
     
     def generateAbstractOperations(GenModel it)
     '''
-    package «packageName».util.operations;
+    package «cliPackageName»;
     
-    import java.util.ArrayList;
     import java.util.Arrays;
     import java.util.Collections;
     import java.util.LinkedHashMap;
@@ -79,14 +78,10 @@ class Operations {
     import java.util.stream.Collectors;
     
     import org.eclipse.emf.common.util.EList;
-    import org.eclipse.emf.ecore.EAttribute;
-    import org.eclipse.emf.ecore.EClass;
     import org.eclipse.emf.ecore.EObject;
     import org.eclipse.emf.ecore.EReference;
     import org.eclipse.emf.ecore.EStructuralFeature;
     
-    import «cliPackageName».FqnResolver;
-    import «cliPackageName».«cliClassName»;
     import «packageName».runtime.«modelName»Model;
 
     /**
@@ -333,12 +328,12 @@ class Operations {
     
     import «builderBuilderPackage».«builderBuilderName»;
     import «genModel.packageName».runtime.«genModel.modelName»Model;
-    import «genModel.packageName».util.operations.AbstractOperations;
+    import «genModel.cliPackageName».AbstractOperations;
 
     /**
      * Operations implementation for «name».
      * Provisions CRUD helpers backed by builders.
-     *
+     *  
      * @generated
      */
     public class «name.capitalize»Operations extends AbstractOperations implements Operations {

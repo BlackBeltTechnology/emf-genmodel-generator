@@ -7,7 +7,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 
 class ModelClient {
 	@Inject extension CliExtension
-    @Inject CliConfig cliConfig
     
 	def doGenerate(GenModel genModel, IFileSystemAccess2 fsa){
         fsa.generateFile(genModel.clientFilePath, generateClient(genModel))
@@ -20,10 +19,9 @@ class ModelClient {
     import java.io.BufferedReader;
     import java.io.DataOutputStream;
     import java.io.File;
+    import java.io.FileReader;
     import java.io.IOException;
     import java.io.InputStreamReader;
-    import java.net.InetAddress;
-    import java.net.ServerSocket;
     import java.net.Socket;
     import java.util.ArrayList;
     import java.util.List;
@@ -36,19 +34,39 @@ class ModelClient {
     public class «clientClassName» {
         
         public static void main(String[] args) {
-            execute(args, «serverClassName».DEFAULT_PORT);
+            execute(args);
         }
 
-        public static void execute(String[] args, int port) {
+        public static void execute(String[] args) {
             if (args.length >= 1 && "start".equals(args[0])) {
-                if (isServerRunning(port)) {
-                    System.err.println("Error: Server is already running on port " + port + ".");
-                    System.err.println("To stop it, run: «modelName.decapitalize»-api stop");
-                    System.exit(1);
+                int port = getPortFromFile();
+                if (port != -1 && isServerRunning(port)) {
+                    System.out.println("Server is already running on port " + port);
+                    System.exit(0);
                 }
-                spawnServerProcess(port);
-                System.out.println("Server started on port " + port);
-                System.exit(0);
+                
+                spawnServerProcess();
+                
+                // Wait for server to start
+                for (int i = 0; i < 50; i++) {
+                    port = getPortFromFile();
+                    if (port != -1 && isServerRunning(port)) {
+                        System.out.println("Server started on port " + port);
+                        System.exit(0);
+                    }
+                    try { 
+                        Thread.sleep(100); 
+                    } catch (InterruptedException e) {}
+                }
+                System.err.println("Failed to start server.");
+                System.exit(1);
+            }
+            
+            int port = getPortFromFile();
+            if (port == -1) {
+                System.err.println("Error: Server is not running (port file not found).");
+                System.err.println("Start the server first with: «modelName.decapitalize»-api start");
+                System.exit(1);
             }
             
             if (args.length >= 1 && "status".equals(args[0])) {
@@ -56,15 +74,13 @@ class ModelClient {
                     System.out.println("Server is running on port " + port);
                     System.exit(0);
                 } else {
-                    System.out.println("Server is not running.");
-                    System.out.println("To start it, run: «modelName.decapitalize»-api start");
+                    System.out.println("Port file exists but server is not responding on port " + port);
                     System.exit(1);
                 }
             }
             
-            // For all other commands, require server to be running
             if (!isServerRunning(port)) {
-                System.err.println("Error: Server is not running.");
+                System.err.println("Error: Server is not running on port " + port);
                 System.err.println("Start the server first with: «modelName.decapitalize»-api start");
                 System.exit(1);
             }
@@ -77,7 +93,25 @@ class ModelClient {
             forwardToServer(args, port);
         }
         
-        private static void spawnServerProcess(int port) {
+        private static int getPortFromFile() {
+            try {
+                File userHome = new File(System.getProperty("user.home"));
+                File portFile = new File(userHome, ".judo" + File.separator + ".«modelName».port");
+                if (portFile.exists()) {
+                    try (BufferedReader br = new BufferedReader(new FileReader(portFile))) {
+                        String line = br.readLine();
+                        if (line != null) {
+                            return Integer.parseInt(line.trim());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+            return -1;
+        }
+
+        private static void spawnServerProcess() {
             try {
                 String javaHome = System.getProperty("java.home");
                 String javaBin = javaHome + File.separator + "bin" + File.separator + "java";
@@ -89,8 +123,6 @@ class ModelClient {
                 command.add("-cp");
                 command.add(classpath);
                 command.add(className);
-                command.add("--port");
-                command.add(String.valueOf(port));
 
                 ProcessBuilder builder = new ProcessBuilder(command);
                 
@@ -101,13 +133,6 @@ class ModelClient {
                 builder.redirectInput(ProcessBuilder.Redirect.from(nullFile));
 
                 builder.start();
-                
-                for (int i = 0; i < 50; i++) {
-                    if (isServerRunning(port)) break;
-                    try { 
-                        Thread.sleep(100); 
-                    } catch (InterruptedException e) {}
-                }
             } catch (Exception e) {
                 e.printStackTrace();
                 System.exit(1);
@@ -115,11 +140,10 @@ class ModelClient {
         }
         
         private static boolean isServerRunning(int port) {
-            try (ServerSocket ss = new ServerSocket(port, 0, InetAddress.getLoopbackAddress())) {
-                ss.setReuseAddress(true);
-                return false;
-            } catch (IOException e) {
+            try (Socket socket = new Socket("localhost", port)) {
                 return true;
+            } catch (IOException e) {
+                return false;
             }
         }
 

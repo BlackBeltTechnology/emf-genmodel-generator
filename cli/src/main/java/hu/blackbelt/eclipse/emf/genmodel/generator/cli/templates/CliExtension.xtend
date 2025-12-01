@@ -29,10 +29,6 @@ class CliExtension extends ModelBuilderExtension {
     	packagePath + "/cli/"
     }
     
-    def cliOperationsPackage(GenModel it) {
-        cliPackageName + ".operations"
-    }
-    
     def cliOperationsFilePath(GenModel it) {
 		cliRootPath + "Operations.java"
     }

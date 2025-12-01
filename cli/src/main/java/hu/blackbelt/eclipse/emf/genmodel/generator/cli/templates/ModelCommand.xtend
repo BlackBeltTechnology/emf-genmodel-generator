@@ -9,12 +9,12 @@ import org.eclipse.xtext.generator.IFileSystemAccess2
 class ModelCommand {
 	@Inject extension CliExtension
     @Inject CliConfig cliConfig
-    
+
 	def doGenerate(GenModel genModel, Resource input, IFileSystemAccess2 fsa){
         fsa.generateFile(genModel.commandFilePath, generateCommand(genModel))
         fsa.generateFile(genModel.resolverFilePath, generateFqnResolver(genModel))
 	}
-	
+
 	def generateFqnResolver(GenModel it) {
 	'''
 	package «cliPackageName»;
@@ -22,11 +22,11 @@ class ModelCommand {
 	import java.util.Optional;
 	import java.util.stream.Collectors;
 	import java.util.stream.Stream;
-	
+
 	import org.eclipse.emf.ecore.EObject;
 	import org.eclipse.emf.ecore.resource.ResourceSet;
-	
-	
+
+
 	public interface FqnResolver {
 	    /**
 	     * Binds the resolver to a specific {@link ResourceSet} so it can traverse and cache
@@ -41,7 +41,7 @@ class ModelCommand {
 	     * @return An Optional containing the resolved EObject, or empty if not found.
 	     */
 	    Optional<EObject> resolve(String fqn);
-	    
+
 	    /**
 	     * Computes the FQN for a given EObject.
 	     * This is the reverse of {@link #resolve(String)}.
@@ -49,7 +49,7 @@ class ModelCommand {
 	     * @return An Optional containing the FQN string, or empty if not computable.
 	     */
 	    Optional<String> getFqn(EObject eObject);
-	    
+
 	    /**
 	     * @return A stream of fqns in the runtime model.
 	     */
@@ -57,17 +57,16 @@ class ModelCommand {
 	}
 	'''
 	}
-	
-    def generateCommand(GenModel it) 
+
+    def generateCommand(GenModel it)
     '''
     package «cliPackageName»;
-    
+
     import picocli.CommandLine;
     import picocli.CommandLine.Command;
     import picocli.CommandLine.Parameters;
     import picocli.CommandLine.Option;
-    import picocli.CommandLine.ParameterException;
-    
+
     import java.util.Map;
     import java.util.HashMap;
     import java.util.Iterator;
@@ -78,13 +77,13 @@ class ModelCommand {
     import java.nio.file.Files;
     import java.nio.file.Path;
     import java.util.stream.Stream;
-    
+
     import «packageName».runtime.«modelName»Model;
-    
+
     /**
      * Command logic for «modelName» model operations.
      * Contains all Picocli @Command annotations and business logic.
-     * 
+     *
      * @generated
      */
     @Command(
@@ -100,9 +99,9 @@ class ModelCommand {
     public class «cliClassName» implements Runnable {
 
         public enum Format { JSON, TABLE }
-    	
+
     	private static final FqnResolver RESOLVER = «IF cliConfig.resolverClass !== null»new «cliConfig.resolverClass»()«ELSE»throw new IllegalStateException("No FqnResolver configured for CLI generation.")«ENDIF»;
-        
+
         public static «modelName»Model sharedModel;
         public static File sharedModelFile;
         public static boolean isDirty = false;
@@ -113,11 +112,11 @@ class ModelCommand {
             }
             RESOLVER.bind(sharedModel.getResourceSet());
         }
-        
+
         private void markDirty() {
             isDirty = true;
         }
-        
+
         private void clearDirty() {
             isDirty = false;
         }
@@ -128,20 +127,20 @@ class ModelCommand {
             OPERATIONS_MAP.put("«cls.eObjectTypeName.toLowerCase»", «cls.cliOperationsImplPackage».«cls.operationsClassName».getInstance());
             «ENDFOR»
     	}
-        
+
         @Override
         public void run() {
             // When called without subcommand, show help
             CommandLine.usage(this, System.out);
         }
-        
+
         static class EObjectTypeCompletions implements Iterable<String> {
         	@Override
         	public Iterator<String> iterator() {
         		return OPERATIONS_MAP.keySet().iterator();
         	}
         }
-        
+
         static class FqnCompletions implements Iterable<String> {
         	@Override
         	public Iterator<String> iterator() {
@@ -152,25 +151,25 @@ class ModelCommand {
         		return RESOLVER.getFqnCollection().iterator();
         	}
         }
-        
+
         @Command(name = "model", description = "Manage model file: load, create, or save.",
              mixinStandardHelpOptions = true)
         public int model(
             @Parameters(index = "0", arity = "0..1", description = "Path to the .model file. Defaults to ./model/*.model", paramLabel = "FILE")
             File modelFile,
-            
+
             @Option(names = {"-l", "--load"}, description = "Load the model file into memory.")
             boolean load,
-            
+
             @Option(names = {"-c", "--create"}, description = "Create a new model file if it doesn't exist.")
             boolean create,
-            
+
             @Option(names = {"-s", "--save"}, description = "Save the current model state to disk.")
             boolean save,
-            
+
             @Option(names = {"-y", "--yes", "--force"}, description = "Force operation even if current model has unsaved changes.")
             boolean force) {
-            
+
             if (save) {
                 if (sharedModel == null || sharedModelFile == null) {
                     System.err.println("No model is loaded. Nothing to save.");
@@ -188,27 +187,27 @@ class ModelCommand {
                     return 1;
                 }
             }
-            
+
             if (!load && !create) {
                 // Default to load
                 load = true;
             }
-            
+
             if (isDirty && !force) {
                 System.err.println("Error: Current model has unsaved changes.");
                 System.err.println("Use 'model --save' to persist changes, or add '--force' to discard changes.");
                 return 1;
             }
-            
+
             try {
                 File targetFile = modelFile != null ? modelFile : discoverModelFile();
-                
+
                 if (targetFile == null) {
                     System.err.println("Error: No model file specified and auto-discovery failed.");
                     System.err.println("Usage: model path/to/file.model --load");
                     return 1;
                 }
-                
+
                 if (!targetFile.exists()) {
                     if (create) {
                         System.out.println("Creating new empty model at: " + targetFile.getAbsolutePath());
@@ -226,7 +225,7 @@ class ModelCommand {
                         return 1;
                     }
                 }
-                
+
                 System.out.println("Loading model from: " + targetFile.getAbsolutePath());
                 sharedModel = «modelName»Model.load«modelName»Model(
                     «modelName»Model.LoadArguments.«modelName.decapitalize»LoadArgumentsBuilder()
@@ -240,13 +239,13 @@ class ModelCommand {
                 System.out.println("Model loaded successfully.");
                 System.out.println("FQN: " + sharedModel.getName());
                 return 0;
-                
+
             } catch (Exception e) {
                 System.err.println("Error: " + e.getMessage());
                 return 1;
             }
         }
-        
+
         private File discoverModelFile() {
             Path startDir = Path.of(".");
             try (Stream<Path> stream = Files.walk(startDir, 3)) {
@@ -269,52 +268,52 @@ class ModelCommand {
         @Command(name = "create", description = "Create a new EObject.",
              mixinStandardHelpOptions = true)
         public int create(
-                @Parameters(index = "0", description = "Type of EObject to create. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class) 
+                @Parameters(index = "0", description = "Type of EObject to create. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
                 String eObjectType,
-                
+
                 @Option(names = {"--attr"}, description = "Set attributes using key=value pairs.", split = ",")
                 Map<String, String> attributes) {
-            
+
             bindResolver();
             Operations operations = getOperations(eObjectType);
             int exitCode = operations.create(RESOLVER, attributes);
-            
+
             if (exitCode == 0) {
                 markDirty();
             }
-            
+
             return exitCode;
         }
-        
+
         @Command(name = "list", description = "List EObjects of a specific type.",
              mixinStandardHelpOptions = true)
         public int list(
             @Parameters(index = "0", description = "Type of EObject to list. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
             String eObjectType,
-            
+
             @Option(names = {"--filter"}, description = "Filter expression (e.g., 'name=John').")
             String filter,
-            
+
             @Option(names = {"-f", "--format"}, description = "Output format: TABLE, JSON", defaultValue = "TABLE")
             Format format) {
-            
+
             bindResolver();
             Operations operations = getOperations(eObjectType);
             return operations.list(RESOLVER, filter, format);
         }
-        
+
         @Command(name = "describe", description = "Show detailed information for a specific EObject, or show the schema if no FQN is provided.",
              mixinStandardHelpOptions = true)
         public int describe(
             @Parameters(index = "0", description = "Type of EObject to describe. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
             String eObjectType,
-            
+
             @Parameters(index = "1", arity = "0..1", description = "FQN of the EObject. If omitted, shows the schema for the type.", completionCandidates = FqnCompletions.class)
             String identifier,
-            
+
             @Option(names = {"-f", "--format"}, description = "Output format: TABLE, JSON", defaultValue = "TABLE")
             Format format) {
-            
+
             Operations operations = getOperations(eObjectType);
             if (identifier == null || identifier.isBlank()) {
                 return operations.describeSchema(format);
@@ -322,61 +321,91 @@ class ModelCommand {
             bindResolver();
             return operations.describe(RESOLVER, identifier, format);
         }
-        
+
         @Command(name = "update", description = "Update attributes of an existing EObject.",
              mixinStandardHelpOptions = true)
         public int update(
             @Parameters(index = "0", description = "Type of EObject to update. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
             String eObjectType,
-            
+
             @Parameters(index = "1", description = "EObject FQN.", completionCandidates = FqnCompletions.class)
             String identifier,
-            
+
             @Option(names = {"--attr"}, description = "Set or overwrite attributes (key=value).", split = ",")
             Map<String, String> attributesToSet,
-            
+
             @Option(names = {"--remove-attr"}, description = "Remove value from a multi-valued attribute (key=value).", split = ",")
             Map<String, String> attributesToRemove) {
-        
+
             bindResolver();
             Operations operations = getOperations(eObjectType);
             int exitCode = operations.update(RESOLVER, identifier, attributesToSet, attributesToRemove);
-            
+
             if (exitCode == 0) {
                 markDirty();
             }
-            
+
             return exitCode;
         }
-        
+
         @Command(name = "delete", description = "Delete an EObject from the model.",
              mixinStandardHelpOptions = true)
         public int delete(
             @Parameters(index = "0", description = "Type of EObject to delete. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
             String eObjectType,
-            
+
             @Parameters(index = "1", description = "Identifier of the EObject.", completionCandidates = FqnCompletions.class)
             String identifier,
-            
+
             @Option(names = {"-y", "--yes"}, description = "Skip confirmation prompt.")
             boolean skipConfirm) {
-        
+
             bindResolver();
             Operations operations = getOperations(eObjectType);
             int exitCode = operations.delete(RESOLVER, identifier, skipConfirm);
-            
+
             if (exitCode == 0) {
                 markDirty();
             }
-            
+
             return exitCode;
         }
-    
+
+        private int readPortFromFile() {
+            try {
+                File userHome = new File(System.getProperty("user.home"));
+                File judoDir = new File(userHome, ".judo");
+                File portFile = new File(judoDir, ".«modelName».port");
+                if (portFile.exists()) {
+                    try (java.util.Scanner scanner = new java.util.Scanner(portFile)) {
+                        if (scanner.hasNextInt()) {
+                            return scanner.nextInt();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // ignore
+            }
+            return 0;
+        }
+
         @Command(name = "stop", description = "Stop the background server process. Use --force to discard unsaved changes.",
              mixinStandardHelpOptions = true)
         public int stop(
+            @Option(names = {"-p", "--port"}, description = "Port the server is running on.", defaultValue = "" + «serverClassName».DEFAULT_PORT)
+            int port,
+
             @Option(names = {"-y", "--yes", "--force"}, description = "Force stop even if current model has unsaved changes.")
             boolean force) {
+
+            if (port == 0) {
+                port = readPortFromFile();
+            }
+
+            if (port == 0) {
+                 System.err.println("Error: No port specified and could not read from file.");
+                 return 1;
+            }
 
             if (isDirty && !force) {
                 System.err.println("Error: Current model has unsaved changes.");
@@ -384,20 +413,19 @@ class ModelCommand {
                 return 1;
             }
 
-            int port = «serverClassName».DEFAULT_PORT;
             if (!isServerRunning(port)) {
                 System.out.println("Server is not running on port " + port);
                 return 1;
             }
-            
+
             try (java.net.Socket socket = new java.net.Socket("localhost", port);
                  DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                  java.io.BufferedReader in = new java.io.BufferedReader(new java.io.InputStreamReader(socket.getInputStream()))) {
-                
+
                 out.writeInt(1);
                 out.writeUTF("shutdown");
                 out.flush();
-                
+
                 String line;
                 while ((line = in.readLine()) != null) {
                     if ("END_OF_RESPONSE".equals(line)) {
@@ -413,7 +441,7 @@ class ModelCommand {
                 return 1;
             }
         }
-        
+
         private static boolean isServerRunning(int port) {
             try (java.net.Socket s = new java.net.Socket("localhost", port)) {
                 return true;
@@ -421,7 +449,7 @@ class ModelCommand {
                 return false;
             }
         }
-        
+
         static Operations getOperations(String type) {
             String lowerCaseType = type.toLowerCase();
             if (!OPERATIONS_MAP.containsKey(lowerCaseType)) {
@@ -431,8 +459,8 @@ class ModelCommand {
             }
             return OPERATIONS_MAP.get(lowerCaseType);
         }
-        
+
     }
     '''
-	
+
 }
