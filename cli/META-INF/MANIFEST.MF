@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EMF Genmodel Generator Cli
+Bundle-SymbolicName: hu.blackbelt.eclipse.emf.genmodel.generator.cli
+Bundle-Version: 1.1.1.qualifier
+Bundle-Vendor: BlackBelt Technology
+Bundle-RequiredExecutionEnvironment: JavaSE-21
+Export-Package: hu.blackbelt.eclipse.emf.genmodel.generator.cli,
+ hu.blackbelt.eclipse.emf.genmodel.generator.cli.engine,
+ hu.blackbelt.eclipse.emf.genmodel.generator.cli.templates
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.emf.codegen.ecore,
+ org.eclipse.emf.mwe.core,
+ org.eclipse.emf.mwe.utils,
+ org.eclipse.xtend.core,
+ org.eclipse.xtext.xtext.generator,
+ org.eclipse.xtext,
+ org.apache.commons.logging,
+ hu.blackbelt.eclipse.emf.genmodel.generator.core,
+ hu.blackbelt.eclipse.emf.genmodel.generator.builder
+Automatic-Module-Name: hu.blackbelt.eclipse.emf.genmodel.generator.cli
