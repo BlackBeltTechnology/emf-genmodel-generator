@@ -39,24 +39,21 @@ class Operations {
     	int create(FqnResolver resolver, Map<String, String> structuralFeatures);
 
         /**
-         * List EObject instances.
+         * Execute a GraphQL query against the EObject instances.
+         * The query should follow GraphQL syntax. To 
+         * { __schema { types { name } } } or { __type(name: "TypeName") { fields { name } } }
+         * to explore the schema.
+         *
+         * @param resolver the FQN resolver for resolving references
+         * @param graphqlQuery the GraphQL query string
+         * @return exit code (0 for success)
          */
-        int list(FqnResolver resolver, String filter, «cliClassName».Format format);
-
-        /**
-         * Describe an EObject instance.
-         */
-         int describe(FqnResolver resolver, String identifier, «cliClassName».Format format);
-
-        /**
-         * Describe the schema (structural features) of the EObject type.
-         */
-         int describeSchema(«cliClassName».Format format);
+        int query(FqnResolver resolver, String graphqlQuery);
 
         /**
          * Update an EObject instance.
          */
-         int update(FqnResolver resolver, String identifier, Map<String, String> structuralFeaturesToSet, Map<String, String> structuralFeaturesToRemove);
+        int update(FqnResolver resolver, String identifier, Map<String, String> structuralFeaturesToSet, Map<String, String> structuralFeaturesToRemove);
         
         /**
          * Delete an EObject instance.
@@ -78,9 +75,25 @@ class Operations {
     import java.util.stream.Collectors;
     
     import org.eclipse.emf.common.util.EList;
+    import org.eclipse.emf.ecore.EClass;
     import org.eclipse.emf.ecore.EObject;
     import org.eclipse.emf.ecore.EReference;
     import org.eclipse.emf.ecore.EStructuralFeature;
+    
+    import graphql.ExecutionInput;
+    import graphql.ExecutionResult;
+    import graphql.GraphQL;
+    import graphql.Scalars;
+    import graphql.schema.DataFetcher;
+    import graphql.schema.FieldCoordinates;
+    import graphql.schema.GraphQLCodeRegistry;
+    import graphql.schema.GraphQLFieldDefinition;
+    import graphql.schema.GraphQLList;
+    import graphql.schema.GraphQLObjectType;
+    import graphql.schema.GraphQLSchema;
+    
+    import com.fasterxml.jackson.databind.ObjectMapper;
+    import com.fasterxml.jackson.databind.SerializationFeature;
     
     import «packageName».runtime.«modelName»Model;
 
@@ -97,6 +110,8 @@ class Operations {
         protected abstract String getEObjectType();
         
         protected abstract «modelName»Model getModel();
+        
+        protected abstract EClass getEClass();
 
         protected Map<String, String> sanitize(Map<String, String> source) {
             return source == null ? new LinkedHashMap<>() : new LinkedHashMap<>(source);
@@ -130,62 +145,119 @@ class Operations {
             return false;
         }
 
-        protected void render(List<Map<String, Object>> rows, «cliClassName».Format format) {
-            if (rows.isEmpty()) {
-                System.out.println("No " + getEObjectType() + " instances found.");
-                return;
+        protected GraphQLSchema buildGraphQLSchema(FqnResolver resolver, List<Map<String, Object>> rows) {
+            EClass eClass = getEClass();
+            String typeName = eClass.getName();
+            
+            GraphQLObjectType.Builder typeBuilder = GraphQLObjectType.newObject().name(typeName);
+            
+            // Add fqn field (always present in describe output)
+            typeBuilder.field(GraphQLFieldDefinition.newFieldDefinition()
+                .name("fqn")
+                .type(Scalars.GraphQLString)
+                .build());
+            
+            for (EStructuralFeature feature : eClass.getEAllStructuralFeatures()) {
+                GraphQLFieldDefinition.Builder fieldBuilder = GraphQLFieldDefinition.newFieldDefinition()
+                    .name(feature.getName());
+                
+                if (feature.isMany()) {
+                    fieldBuilder.type(GraphQLList.list(Scalars.GraphQLString));
+                } else {
+                    fieldBuilder.type(Scalars.GraphQLString);
+                }
+                
+                typeBuilder.field(fieldBuilder.build());
             }
-
-            String payload;
-            switch (format) {
-                case JSON:
-                    payload = toJson(rows);
-                    break;
-                case TABLE:
-                default:
-                    payload = toTable(rows);
-                    break;
+            
+            GraphQLObjectType entityType = typeBuilder.build();
+            
+            GraphQLObjectType queryType = GraphQLObjectType.newObject()
+                .name("Query")
+                .field(GraphQLFieldDefinition.newFieldDefinition()
+                    .name("items")
+                    .type(GraphQLList.list(entityType))
+                    .argument(builder -> builder.name("filter").type(Scalars.GraphQLString))
+                    .build())
+                .field(GraphQLFieldDefinition.newFieldDefinition()
+                    .name("item")
+                    .type(entityType)
+                    .argument(builder -> builder.name("fqn").type(Scalars.GraphQLString))
+                    .build())
+                .build();
+            
+            GraphQLCodeRegistry codeRegistry = GraphQLCodeRegistry.newCodeRegistry()
+                .dataFetcher(FieldCoordinates.coordinates("Query", "items"), (DataFetcher<?>) env -> {
+                    String filter = env.getArgument("filter");
+                    if (filter == null || filter.isBlank()) {
+                        return rows;
+                    }
+                    return rows.stream()
+                        .filter(row -> matchesFilterMap(row, filter))
+                        .collect(Collectors.toList());
+                })
+                .dataFetcher(FieldCoordinates.coordinates("Query", "item"), (DataFetcher<?>) env -> {
+                    String fqn = env.getArgument("fqn");
+                    if (fqn == null || fqn.isBlank()) {
+                        return null;
+                    }
+                    return rows.stream()
+                        .filter(row -> fqn.equals(row.get("fqn")))
+                        .findFirst()
+                        .orElse(null);
+                })
+                .build();
+            
+            return GraphQLSchema.newSchema()
+                .query(queryType)
+                .codeRegistry(codeRegistry)
+                .build();
+        }
+        
+        protected boolean matchesFilterMap(Map<String, Object> row, String filter) {
+            String[] tokens = filter.split("=", 2);
+            if (tokens.length != 2) {
+                return true;
             }
-            System.out.println(payload);
+            String key = tokens[0].trim();
+            String expected = tokens[1].trim();
+            Object actual = row.get(key);
+            if (actual instanceof List<?>) {
+                return ((List<?>) actual).stream()
+                    .anyMatch(value -> Objects.toString(value, "").equalsIgnoreCase(expected));
+            }
+            return Objects.toString(actual, "").equalsIgnoreCase(expected);
         }
 
-        protected String toJson(List<Map<String, Object>> rows) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("[\n");
-            for (int i = 0; i < rows.size(); i++) {
-                Map<String, Object> row = rows.get(i);
-                builder.append("  {");
-                int idx = 0;
-                for (Map.Entry<String, Object> entry : row.entrySet()) {
-                    builder.append('\"').append(entry.getKey()).append("\": ");
-                    builder.append('\"').append(Objects.toString(entry.getValue(), "")).append('\"');
-                    if (++idx < row.size()) {
-                        builder.append(", ");
-                    }
-                }
-                builder.append("}");
-                if (i + 1 < rows.size()) {
-                    builder.append(',');
-                }
-                builder.append("\n");
-            }
-            builder.append("]");
-            return builder.toString();
-        }
+        private static final ObjectMapper JSON_MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
-        protected String toTable(List<Map<String, Object>> rows) {
-            StringBuilder builder = new StringBuilder();
-            for (Map<String, Object> row : rows) {
-                builder.append("- ").append(buildRowLabel(row)).append(System.lineSeparator());
-                row.forEach((key, value) -> {
-                    if (key.startsWith("_")) {
-                        return;
-                    }
-                    builder.append("\t").append(key).append(": ").append(Objects.toString(value, ""))
-                            .append(System.lineSeparator());
-                });
+        protected int executeGraphQL(FqnResolver resolver, String graphqlQuery, List<Map<String, Object>> rows) {
+            try {
+                GraphQLSchema schema = buildGraphQLSchema(resolver, rows);
+                GraphQL graphQL = GraphQL.newGraphQL(schema).build();
+                
+                ExecutionInput executionInput = ExecutionInput.newExecutionInput()
+                    .query(graphqlQuery)
+                    .build();
+                
+                ExecutionResult result = graphQL.execute(executionInput);
+                
+                if (!result.getErrors().isEmpty()) {
+                    System.err.println("GraphQL errors:");
+                    result.getErrors().forEach(error -> System.err.println("  - " + error.getMessage()));
+                    return 1;
+                }
+                
+                Object data = result.getData();
+                String json = JSON_MAPPER.writeValueAsString(data);
+                System.out.println(json);
+                return 0;
+                
+            } catch (Exception ex) {
+                System.err.printf("Failed to execute GraphQL query for %s: %s%n", getEObjectType(), ex.getMessage());
+                ex.printStackTrace();
+                return 1;
             }
-            return builder.toString();
         }
 
         protected String getDisplayName(EObject eObject) {
@@ -207,11 +279,6 @@ class Operations {
                     .map(String::trim)
                     .filter(token -> !token.isEmpty())
                     .collect(Collectors.toList());
-        }
-
-        protected String buildRowLabel(Map<String, Object> row) {
-            String name = Objects.toString(row.getOrDefault("name", row.getOrDefault("fqn", getEObjectType())), getEObjectType());
-            return getEObjectType() + " " + name;
         }
 
         protected void removeFromContainer(EObject instance) {
@@ -265,24 +332,6 @@ class Operations {
             return description;
         }
 
-        protected boolean matchesFilter(EObject instance, String filter) {
-            String[] tokens = filter.split("=", 2);
-            if (tokens.length != 2) {
-                return true;
-            }
-            String key = tokens[0].trim();
-            String expected = tokens[1].trim();
-            EStructuralFeature feature = instance.eClass().getEStructuralFeature(key);
-            if (feature == null) {
-                return false;
-            }
-            Object actual = instance.eGet(feature);
-            if (feature.isMany() && actual instanceof List<?>) {
-                return ((List<?>) actual).stream().anyMatch(value -> Objects.toString(value, "").equalsIgnoreCase(expected));
-            }
-            return Objects.toString(actual, "").equalsIgnoreCase(expected);
-        }
-
         protected void removeStructuralFeatureValues(EObject eObject, Map<String, String> structuralFeatures) {
             if (structuralFeatures.isEmpty()) {
                 return;
@@ -309,7 +358,6 @@ class Operations {
     package «cliOperationsImplPackage»;
     
     import java.util.ArrayList;
-    import java.util.Collections;
     import java.util.LinkedHashMap;
     import java.util.List;
     import java.util.Map;
@@ -357,40 +405,16 @@ class Operations {
             return «genModel.cliClassName».sharedModel;
         }
 
-        private EClass getEClass() {
-            return «genPackage.packageFqName».«genPackage.packageInterfaceName».eINSTANCE.get«name»();
-        }
-        
         @Override
-        public int describeSchema(«genModel.cliClassName».Format format) {
-            EClass eClass = getEClass();
-            List<Map<String, Object>> rows = new ArrayList<>();
-            for (EStructuralFeature feature : eClass.getEAllStructuralFeatures()) {
-                Map<String, Object> row = new LinkedHashMap<>();
-                row.put("name", feature.getName());
-                row.put("_type", feature.getName());
-                if (feature instanceof EReference ref) {
-                    row.put("kind", "reference");
-                    row.put("type", ref.getEReferenceType() != null ? ref.getEReferenceType().getName() : "EObject");
-                    row.put("containment", ref.isContainment());
-                } else {
-                    row.put("kind", "attribute");
-                    row.put("type", feature.getEType() != null ? feature.getEType().getName() : "unknown");
-                }
-                row.put("many", feature.isMany());
-                row.put("required", feature.isRequired());
-                rows.add(row);
-            }
-            render(rows, format);
-            return 0;
+        public EClass getEClass() {
+            return «genPackage.packageFqName».«genPackage.packageInterfaceName».eINSTANCE.get«name»();
         }
         
         private boolean validateAttributes(java.util.Set<String> keys) {
             EClass eClass = getEClass();
             for (String key : keys) {
                 if (eClass.getEStructuralFeature(key) == null) {
-                    System.err.printf("Unknown attribute '%s' for %s. Valid attributes:%n", key, EOBJECT_TYPE);
-                    describeSchema(«genModel.cliClassName».Format.TABLE);
+                    System.err.printf("Unknown attribute '%s' for %s.%n", key, EOBJECT_TYPE);
                     return false;
                 }
             }
@@ -432,34 +456,20 @@ class Operations {
         }
 
         @Override
-        public int list(FqnResolver resolver, String filter, «genModel.cliClassName».Format format) {
+        public int query(FqnResolver resolver, String graphqlQuery) {
             try {
-                Stream<«modelJavaFqName»> stream = streamEObjects();
-                if (filter != null && !filter.isBlank()) {
-                    stream = stream.filter(eObject -> matchesFilter(eObject, filter));
-                }
-                List<Map<String, Object>> rows = stream
+                List<Map<String, Object>> rows = streamEObjects()
                         .map(eObject -> describe(resolver, eObject))
                         .collect(Collectors.toList());
-                render(rows, format);
-                return 0;
-            } catch (Exception ex) {
-                return fail("list", ex);
-            }
-        }
-
-        @Override
-        public int describe(FqnResolver resolver, String identifier, «genModel.cliClassName».Format format) {
-            try {
-                Optional<«modelJavaFqName»> eObject = resolveEObject(resolver, identifier);
-                if (eObject.isEmpty()) {
-                    System.err.printf("Could not find %s '%s'%n", EOBJECT_TYPE, identifier);
-                    return 1;
+                
+                if (rows.isEmpty()) {
+                    System.out.println("No " + EOBJECT_TYPE + " instances found.");
+                    return 0;
                 }
-                render(Collections.singletonList(describe(resolver, eObject.get())), format);
-                return 0;
+                
+                return executeGraphQL(resolver, graphqlQuery, rows);
             } catch (Exception ex) {
-                return fail("describe", ex);
+                return fail("query", ex);
             }
         }
 
@@ -521,7 +531,7 @@ class Operations {
         }
 
         private Stream<«modelJavaFqName»> streamEObjects() {
-            return getModel().getEsmModelResourceSupport().getStreamOf(«modelJavaFqName».class);
+            return getModel().get«genModel.modelName»ModelResourceSupport().getStreamOf(«modelJavaFqName».class);
         }
 
         private Map<String, Object> resolveValues(FqnResolver resolver, Map<String, String> attributes) {

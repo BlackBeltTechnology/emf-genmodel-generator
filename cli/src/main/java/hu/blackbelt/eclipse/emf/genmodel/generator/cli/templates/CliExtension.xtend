@@ -3,8 +3,6 @@ package hu.blackbelt.eclipse.emf.genmodel.generator.cli.templates;
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
 import org.eclipse.emf.codegen.ecore.genmodel.GenClass
-import com.google.inject.Inject
-import hu.blackbelt.eclipse.emf.genmodel.generator.cli.engine.CliConfig
 import hu.blackbelt.eclipse.emf.genmodel.generator.builder.templates.ModelBuilderExtension
 
 /**
@@ -12,9 +10,7 @@ import hu.blackbelt.eclipse.emf.genmodel.generator.builder.templates.ModelBuilde
  * Extends GenModelExtensions for common functionality and adds CLI-specific methods.
  */
 class CliExtension extends ModelBuilderExtension {
-    
-    @Inject CliConfig cliConfig
-    
+        
     def packageName(GenPackage it) {
         interfacePackageName
     }

@@ -96,8 +96,6 @@ class ModelCommand {
     )
     public class «cliClassName» implements Runnable {
 
-        public enum Format { JSON, TABLE }
-
     	private static final FqnResolver RESOLVER = «IF cliConfig.resolverClass !== null»new «cliConfig.resolverClass»()«ELSE»throw new IllegalStateException("No FqnResolver configured for CLI generation.")«ENDIF»;
 
         public static «modelName»Model sharedModel;
@@ -283,41 +281,24 @@ class ModelCommand {
             return exitCode;
         }
 
-        @Command(name = "list", description = "List EObjects of a specific type.",
+        @Command(name = "query", description = "Execute a GraphQL query against EObjects of a specific type.%n%n" +
+             "Example queries:%n" +
+             "  List all items:        { items { fqn name } }%n" +
+             "  Filter items:          { items(filter: \"name=MyEntity\") { fqn name } }%n" +
+             "  Get single item:       { item(fqn: \"my.entity.fqn\") { fqn name } }%n" +
+             "  Introspect schema:     { __schema { types { name } } }%n" +
+             "  Introspect type:       { __type(name: \"EntityType\") { fields { name type { name } } } }%n",
              mixinStandardHelpOptions = true)
-        public int list(
-            @Parameters(index = "0", description = "Type of EObject to list. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
+        public int query(
+            @Parameters(index = "0", description = "Type of EObject to query. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
             String eObjectType,
 
-            @Option(names = {"--filter"}, description = "Filter expression (e.g., 'name=John').")
-            String filter,
-
-            @Option(names = {"-f", "--format"}, description = "Output format: TABLE, JSON", defaultValue = "TABLE")
-            Format format) {
+            @Parameters(index = "1", description = "GraphQL query string. Use '{ items { fqn name } }' to list all, or '{ __schema { types { name } } }' to introspect schema.")
+            String graphqlQuery) {
 
             bindResolver();
             Operations operations = getOperations(eObjectType);
-            return operations.list(RESOLVER, filter, format);
-        }
-
-        @Command(name = "describe", description = "Show detailed information for a specific EObject, or show the schema if no FQN is provided.",
-             mixinStandardHelpOptions = true)
-        public int describe(
-            @Parameters(index = "0", description = "Type of EObject to describe. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
-            String eObjectType,
-
-            @Parameters(index = "1", arity = "0..1", description = "FQN of the EObject. If omitted, shows the schema for the type.", completionCandidates = FqnCompletions.class)
-            String identifier,
-
-            @Option(names = {"-f", "--format"}, description = "Output format: TABLE, JSON", defaultValue = "TABLE")
-            Format format) {
-
-            Operations operations = getOperations(eObjectType);
-            if (identifier == null || identifier.isBlank()) {
-                return operations.describeSchema(format);
-            }
-            bindResolver();
-            return operations.describe(RESOLVER, identifier, format);
+            return operations.query(RESOLVER, graphqlQuery);
         }
 
         @Command(name = "update", description = "Update attributes of an existing EObject.",

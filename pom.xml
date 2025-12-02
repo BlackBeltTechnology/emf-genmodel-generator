@@ -585,13 +585,13 @@
                 </property>
             </activation>
             <modules>
-                <module>cli</module>
                 <module>core</module>
                 <module>helper</module>
                 <module>builder</module>
                 <module>ecore</module>
                 <module>feature</module>
                 <module>site</module>
+                <module>cli</module>
             </modules>
         </profile>
 

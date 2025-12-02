@@ -1,13 +1,11 @@
 package hu.blackbelt.eclipse.emf.genmodel.generator.cli.templates
 
 import com.google.inject.Inject
-import hu.blackbelt.eclipse.emf.genmodel.generator.cli.engine.CliConfig
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.xtext.generator.IFileSystemAccess2
 
 class ModelServer {
 	@Inject extension CliExtension
-    @Inject CliConfig cliConfig
     
 	def doGenerate(GenModel genModel, IFileSystemAccess2 fsa){
         fsa.generateFile(genModel.serverFilePath, generateServer(genModel))
