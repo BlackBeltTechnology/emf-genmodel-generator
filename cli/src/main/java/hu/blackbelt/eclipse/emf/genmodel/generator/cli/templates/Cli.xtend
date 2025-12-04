@@ -11,16 +11,18 @@ class Cli implements IGenerator2 {
 	@Inject ModelClient modelClient
 	@Inject ModelServer modelServer
 	@Inject ModelCommand modelCommand
-	@Inject Operations operations
-	
+	@Inject OperationsImpl operations
+	@Inject OperationsBase modelOperations
+
 	override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
 	}
-	
+
 	override beforeGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
 	}
-	
+
 	override doGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
 		input.allContents.filter(GenModel).forEach[
+			modelOperations.doGenerate(it,fsa)
 			operations.doGenerate(it, fsa)
 			modelClient.doGenerate(it, fsa)
 			modelServer.doGenerate(it, fsa)

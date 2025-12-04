@@ -281,24 +281,35 @@ class ModelCommand {
             return exitCode;
         }
 
-        @Command(name = "query", description = "Execute a GraphQL query against EObjects of a specific type.%n%n" +
-             "Example queries:%n" +
+        @Command(name = "execute", description = "Execute a GraphQL query or mutation against EObjects of a specific type.%n%n" +
+             "Query Examples:%n" +
              "  List all items:        { items { fqn name } }%n" +
              "  Filter items:          { items(filter: \"name=MyEntity\") { fqn name } }%n" +
              "  Get single item:       { item(fqn: \"my.entity.fqn\") { fqn name } }%n" +
              "  Introspect schema:     { __schema { types { name } } }%n" +
-             "  Introspect type:       { __type(name: \"EntityType\") { fields { name type { name } } } }%n",
+             "  Introspect type:       { __type(name: \"EntityType\") { fields { name type { name } } } }%n%n" +
+             "Mutation Examples:%n" +
+             "  Create:                mutation { create(input: {name: \"MyName\", container: \"parent.fqn\"}) { fqn name } }%n" +
+             "  Update:                mutation { update(fqn: \"item.fqn\", input: {name: \"NewName\"}) { fqn name } }%n" +
+             "  Delete:                mutation { delete(fqn: \"item.fqn\") { fqn success } }%n",
              mixinStandardHelpOptions = true)
-        public int query(
-            @Parameters(index = "0", description = "Type of EObject to query. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
+        public int execute(
+            @Parameters(index = "0", description = "Type of EObject to operate on. Valid types: ${COMPLETION-CANDIDATES}", completionCandidates = EObjectTypeCompletions.class)
             String eObjectType,
 
-            @Parameters(index = "1", description = "GraphQL query string. Use '{ items { fqn name } }' to list all, or '{ __schema { types { name } } }' to introspect schema.")
+            @Parameters(index = "1", description = "GraphQL query or mutation string.")
             String graphqlQuery) {
 
             bindResolver();
             Operations operations = getOperations(eObjectType);
-            return operations.query(RESOLVER, graphqlQuery);
+            int exitCode = operations.execute(RESOLVER, graphqlQuery);
+
+            // Mark dirty for mutations
+            if (exitCode == 0 && graphqlQuery.trim().toLowerCase().startsWith("mutation")) {
+                markDirty();
+            }
+
+            return exitCode;
         }
 
         @Command(name = "update", description = "Update attributes of an existing EObject.",
