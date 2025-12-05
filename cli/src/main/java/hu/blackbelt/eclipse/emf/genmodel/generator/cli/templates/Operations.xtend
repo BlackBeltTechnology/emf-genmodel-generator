@@ -129,8 +129,9 @@ class Operations {
                 return false;
             }
             for (EStructuralFeature feature : container.eClass().getEAllStructuralFeatures()) {
-                if (feature instanceof EReference reference && reference.isContainment()) {
-                    if (reference.getEReferenceType() != null && reference.getEReferenceType().isSuperTypeOf(child.eClass())) {
+                if (feature instanceof EReference) {
+                    EReference reference = (EReference) feature;
+                    if (reference.isContainment() && reference.getEReferenceType() != null && reference.getEReferenceType().isSuperTypeOf(child.eClass())) {
                         if (reference.isMany()) {
                             @SuppressWarnings("unchecked")
                             List<EObject> list = (List<EObject>) container.eGet(reference);
