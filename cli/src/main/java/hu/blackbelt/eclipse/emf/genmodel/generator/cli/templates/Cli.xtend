@@ -13,6 +13,7 @@ class Cli implements IGenerator2 {
 	@Inject ModelCommand modelCommand
 	@Inject OperationsImpl operations
 	@Inject OperationsBase modelOperations
+	@Inject LoggingMixin loggingMixin
 
 	override afterGenerate(Resource input, IFileSystemAccess2 fsa, IGeneratorContext context) {
 	}
@@ -27,6 +28,7 @@ class Cli implements IGenerator2 {
 			modelClient.doGenerate(it, fsa)
 			modelServer.doGenerate(it, fsa)
 			modelCommand.doGenerate(it, input, fsa)
+			loggingMixin.doGenerate(it, fsa)
 		]
 	}
 }

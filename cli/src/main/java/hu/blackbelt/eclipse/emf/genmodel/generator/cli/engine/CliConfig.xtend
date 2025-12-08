@@ -6,4 +6,5 @@ import org.eclipse.xtend.lib.annotations.Accessors
 @Accessors
 class CliConfig extends GeneratorConfig {
 	String resolverClass;
+	String validatorClass;
 }

@@ -13,6 +13,7 @@ class CliGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
     String javaGenPath
     String modelDir
     String resolverClass
+    String validatorClass
     String slot = "cliGenerator"
     Boolean printXmlOnError = false;
 
@@ -20,11 +21,12 @@ class CliGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
         val slotEntry = new ResourceLoadingSlotEntry() => [
             setSlot(slot)
         ]
-        
+
         val config = new CliConfig() => [
             setJavaGenPath(javaGenPath)
             setPrintXmlOnError(printXmlOnError)
             setResolverClass(resolverClass)
+            setValidatorClass(validatorClass)
         ]
 
         val setup = new CliGeneratorStandaloneSetup() => [
