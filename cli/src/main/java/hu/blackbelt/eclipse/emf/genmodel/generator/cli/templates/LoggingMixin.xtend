@@ -32,20 +32,18 @@ class LoggingMixin {
 		@Option(names = {"-v", "--verbose"}, description = "Enable verbose (DEBUG) logging for the CLI")
 		boolean verbose;
 
-		public boolean isVerbose() {
-			return verbose;
-		}
-
 		public void configureLogging() {
-			if (verbose) {
-				try {
-					ch.qos.logback.classic.Logger rootLogger =
-						(ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+			try {
+				ch.qos.logback.classic.Logger rootLogger =
+					(ch.qos.logback.classic.Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+				if (verbose) {
 					rootLogger.setLevel(ch.qos.logback.classic.Level.DEBUG);
 					LOG.debug("Verbose logging enabled");
-				} catch (Exception e) {
-					LOG.info("Verbose mode requested but could not configure logger: {}", e.getMessage());
+				} else {
+					rootLogger.setLevel(ch.qos.logback.classic.Level.INFO);
 				}
+			} catch (Exception e) {
+				LOG.info("Verbose mode requested but could not configure logger: {}", e.getMessage());
 			}
 		}
 	}

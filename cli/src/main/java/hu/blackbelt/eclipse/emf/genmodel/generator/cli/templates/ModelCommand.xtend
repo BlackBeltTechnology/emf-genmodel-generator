@@ -127,6 +127,8 @@ class ModelCommand {
 
     	private static final FqnResolver RESOLVER = «IF cliConfig.resolverClass !== null»new «cliConfig.resolverClass»()«ELSE»throw new IllegalStateException("No FqnResolver configured for CLI generation.")«ENDIF»;
 
+        private static final Validator VALIDATOR = «IF cliConfig.validatorClass !== null»new «cliConfig.validatorClass»()«ELSE»throw new IllegalStateException("No Validator configured for CLI generation.")«ENDIF»;
+
         public static «modelClass» sharedModel;
         public static File sharedModelFile;
         public static boolean isDirty = false;
@@ -209,7 +211,7 @@ class ModelCommand {
             @Option(names = {"-f", "--force"}, description = "Force operation even if current model has unsaved changes.")
             boolean force,
 
-            @Option(names = "--validate", description = "Validate model on load/save.", negatable = true, defaultValue = "true")
+            @Option(names = "--validate", description = "Validate model on load/save.", negatable = true, defaultValue = "true", fallbackValue = "true")
             boolean validate) {
 
             if (loggingMixin != null) {
@@ -222,18 +224,28 @@ class ModelCommand {
             boolean save = modelIo != null && modelIo.save;
 
             if (save) {
-                if (sharedModel == null || sharedModelFile == null) {
+                if (sharedModel == null) {
                     LOG.error("No model is loaded. Nothing to save.");
                     return 1;
                 }
                 try {
-                    LOG.info("Saving model to: {}", sharedModelFile.getAbsolutePath());
+                    File saveFile = modelFile != null ? modelFile : sharedModelFile;
+                    if (saveFile == null) {
+                        LOG.error("No file specified for save operation.");
+                        return 1;
+                    }
+                    LOG.info("Saving model to: {}", saveFile.getAbsolutePath());
                     LOG.debug("Validation enabled: {}", validate);
+                    if (validate) {
+                        VALIDATOR.validateModel(LOG, sharedModel);
+                    }
                     «modelClass».SaveArguments.SaveArgumentsBuilder saveBuilder = «modelClass».SaveArguments.«modelName.decapitalize»SaveArgumentsBuilder()
-                        .file(sharedModelFile)
-                        .validateModel(validate);
+                        .file(saveFile);
                     sharedModel.save«modelClass»(saveBuilder.build());
                     LOG.info("Save complete.");
+                    if (modelFile != null) {
+                        sharedModelFile = modelFile;
+                    }
                     clearDirty();
                     return 0;
                 } catch (IOException | «modelValidationException» e) {
@@ -281,9 +293,11 @@ class ModelCommand {
                 sharedModel = «modelClass».load«modelClass»(
                     «modelClass».LoadArguments.«modelName.decapitalize»LoadArgumentsBuilder()
                         .uri(org.eclipse.emf.common.util.URI.createFileURI(targetFile.getAbsolutePath()))
-                        .validateModel(validate)
                         .build()
                 );
+                if (validate) {
+                    VALIDATOR.validateModel(LOG, sharedModel);
+                }
                 sharedModelFile = targetFile;
                 clearDirty();
                 RESOLVER.bind(sharedModel.getResourceSet());
