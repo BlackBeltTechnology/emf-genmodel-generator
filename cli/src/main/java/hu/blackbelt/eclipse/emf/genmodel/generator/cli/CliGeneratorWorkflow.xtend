@@ -6,6 +6,8 @@ import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
 import org.eclipse.emf.mwe2.runtime.workflow.AbstractCompositeWorkflowComponent
 import hu.blackbelt.eclipse.emf.genmodel.generator.cli.engine.CliGeneratorStandaloneSetup
 import hu.blackbelt.eclipse.emf.genmodel.generator.cli.engine.CliConfig
+import java.util.List
+import java.util.ArrayList
 
 @Accessors
 class CliGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
@@ -16,6 +18,11 @@ class CliGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
     String validatorClass
     String slot = "cliGenerator"
     Boolean printXmlOnError = false;
+    List<String> genModelNames = new ArrayList();
+
+    def addGenModelName(String name) {
+        genModelNames.add(name);
+    }
 
     override preInvoke() {
         val slotEntry = new ResourceLoadingSlotEntry() => [
@@ -27,6 +34,7 @@ class CliGeneratorWorkflow extends AbstractCompositeWorkflowComponent {
             setPrintXmlOnError(printXmlOnError)
             setResolverClass(resolverClass)
             setValidatorClass(validatorClass)
+            setGenModelNames(genModelNames)
         ]
 
         val setup = new CliGeneratorStandaloneSetup() => [
