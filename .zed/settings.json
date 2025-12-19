@@ -1,0 +1,34 @@
+{
+  "lsp": {
+    "jdtls": {
+      "settings": {
+        "java": {
+          "format": { "enabled": false },
+          "saveActions": {
+            "organizeImports": false
+          },
+          "maven": {
+            "downloadSources": true,
+            "updateWhenProjectConfigurationChanges": false,
+            "updateProfiles": [],
+            "updateArgs": ["validate"]
+          },
+          "autobuild": {
+            "enabled": false,
+            "exclude": ["**"]
+          }
+        }
+      }
+    }
+  },
+  "languages": {
+    "XML": {
+      "format_on_save": "off",
+      "formatter": null
+    },
+    "Java": {
+      "format_on_save": "off",
+      "formatter": null
+    }
+  }
+}

@@ -2,117 +2,69 @@ package hu.blackbelt.eclipse.emf.genmodel.generator.cli.templates;
 
 import org.eclipse.emf.codegen.ecore.genmodel.GenModel
 import org.eclipse.emf.codegen.ecore.genmodel.GenPackage
-import org.eclipse.emf.codegen.ecore.genmodel.GenClass
 import hu.blackbelt.eclipse.emf.genmodel.generator.builder.templates.ModelBuilderExtension
 
 /**
  * CLI-specific extensions.
- * Extends GenModelExtensions for common functionality and adds CLI-specific methods.
+ * Extends ModelBuilderExtension for common functionality and adds CLI-specific methods.
  */
 class CliExtension extends ModelBuilderExtension {
-        
-    def packageName(GenPackage it) {
-        interfacePackageName
+
+    // ========== Model Type Checking ==========
+
+    /**
+     * Check if this GenModel is a JUDO metamodel (not a referenced external model like Ecore).
+     * JUDO models have package names starting with "hu.blackbelt.judo.meta".
+     */
+    def isJudoModel(GenModel it) {
+        val pkg = packageName
+        return pkg !== null && pkg.startsWith("hu.blackbelt.judo.meta")
     }
 
-    // ========== CLI-Specific: CLI Package Helpers ==========
-    
+    /**
+     * Check if this GenPackage is a JUDO metamodel package.
+     * JUDO packages have FQN starting with "hu.blackbelt.judo.meta".
+     * Non-JUDO packages (like org.eclipse.emf.ecore for ASM) are skipped.
+     */
+    def isJudoPackage(GenPackage it) {
+        val fqn = packageFqName
+        return fqn !== null && fqn.startsWith("hu.blackbelt.judo.meta")
+    }
+
+    /**
+     * Check if this GenModel is a primary model (not a sub-model like rdbms-datatypes).
+     * Primary models have simple names like "Esm", "Psm", "Rdbms", "Ui".
+     * Sub-models have compound names like "RdbmsDataTypes", "RdbmsNameMapping".
+     */
+    def isPrimaryModel(GenModel it) {
+        val name = modelName
+        if (name === null) {
+            return false
+        }
+        // Primary models have simple names (Esm, Psm, Rdbms, Ui, etc.)
+        // Sub-models have compound names with multiple capital letters
+        // Check if name matches pattern: single word or ends with common metamodel suffixes
+        val primaryPatterns = #["Esm", "Psm", "Asm", "Rdbms", "Ui", "Expression", "Jql", "Jcl", "Measure", "Query", "Script", "Keycloak", "Liquibase", "Openapi"]
+        return primaryPatterns.exists[name.equals(it) || name.equalsIgnoreCase(it)]
+    }
+
+    // ========== CLI Package Helpers ==========
+
     def cliPackageName(GenModel it) {
         packageName + ".cli"
     }
-    
+
     def cliRootPath(GenModel it) {
     	packagePath + "/cli/"
     }
-    
-    def cliOperationsFilePath(GenModel it) {
-		cliRootPath + "Operations.java"
-    }
-    
-    def abstractOperationsFilePath(GenModel it) {
-    	cliRootPath + "AbstractOperations.java"
-    }
-    
-    def cliOperationsImplPackage(GenClass it) {
-    	genPackage.packageFqName + ".util.operations"
-    }
-    
-    def cliMixinsPackage(GenModel it) {
-        cliPackageName + ".mixins"
-    }
-    
-    def cliClassName(GenModel it) {
-    	modelName.capitalize +"Command"
-    }
-        
-    def mainCommandFilePath(GenModel it) {
-        cliRootPath +  modelName.capitalize +"Command.java"
-    }
-    
-    def resolverFilePath(GenModel it) {
-        cliRootPath  + "FqnResolver.java"
-    }
-    
-    def resolverPackage(GenModel it) {
-        cliPackageName +".FqnResolver"
-    }
-    
-    def operationsClassName(GenClass it) {
-    	name.capitalize + "Operations"
-    }
-    
-    def operationsImplFilePath(GenClass it) {
-        genPackage.packagePath + "/util/operations/" + operationsClassName +".java"
-    }
-    
-    def operationsImplFilePath(GenModel it) {
-		packagePath + "/util/operations/AbstractOperations.java"
-    }
-    
-    def pomPath(GenModel it) {
-    	
-    }
-  
-    def mixinPath(GenModel it, String className) {
-        cliRootPath + "mixins/" + className.capitalize + "Options.java"
-    }
-        
-    def eObjectTypeName(GenClass it) {
-        name.toLowerCase
-    }
-        
-    def allConcreteClasses(GenModel it) {
-	    getAllGenPackagesWithConcreteClasses().flatMap[ genClasses ].filter[ isBuilderType ]
-    }
-    
-        
-    def eObjectTypeNames(GenModel it) {
-        allConcreteClasses.map[eObjectTypeName].toList
-    }
-    
-    
-    def allReferences(GenClass it) {
-        allGenFeatures.filter[isReferenceType]
-    }
-    
-    def serverClassName(GenModel it) {
-        modelName.capitalize + "Server"
+
+    // ========== ModelSchema Helpers ==========
+
+    def modelSchemaClassName(GenModel it) {
+        modelName.capitalize + "ModelSchema"
     }
 
-    def serverFilePath(GenModel it) {
-        cliRootPath + serverClassName + ".java"
-    }
-    
-    def clientClassName(GenModel it) {
-        modelName.capitalize + "Client"
-    }
-
-    def clientFilePath(GenModel it) {
-        cliRootPath + clientClassName + ".java"
-    }
-    
-    def commandFilePath(GenModel it) {
-        cliRootPath + cliClassName + ".java"
+    def modelSchemaFilePath(GenModel it) {
+        cliRootPath + modelSchemaClassName + ".java"
     }
 }
-
