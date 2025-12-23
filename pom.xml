@@ -591,7 +591,6 @@
                 <module>ecore</module>
                 <module>feature</module>
                 <module>site</module>
-                <module>cli</module>
             </modules>
         </profile>
 
