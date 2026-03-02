@@ -26,7 +26,7 @@ gitGraph
     commit id: "fix"
     checkout release/1.0-beta1
     merge bugfix/JNG-4
-    checkout main
+    checkout master
     merge release/1.0-beta1 id: "v1.0-beta1"
     checkout develop
     merge release/1.0-beta1
