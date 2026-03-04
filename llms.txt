@@ -25,6 +25,11 @@ Key facts:
 - [feature/](feature/): Eclipse feature packaging bundling all plugins
 - [site/](site/): Eclipse P2 update site for distribution
 
+## Used by
+
+- [judo-meta-asm](../../models/judo-meta-asm): models/judo-meta-asm
+- [judo-tatami-core](../../runtime/judo-tatami-core): runtime/judo-tatami-core
+
 ## Optional
 
 - [.github/workflows/build.yml](.github/workflows/build.yml): CI/CD build pipeline
