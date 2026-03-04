@@ -1,0 +1,32 @@
+# EMF GenModel Generator
+
+> Eclipse/Tycho-based code generator that produces Builder pattern classes and Helper utilities from EMF GenModel files, distributed as Eclipse plugins via P2 update sites.
+
+Key facts:
+- Java 21, Xtend 2.39.0 / Xtext 2.39.0 for template-based code generation
+- Maven 3.9.4+ with Tycho 4.0.13 (Eclipse plugin build tooling), 6 modules
+- Generates fluent Builder classes and stream-based ModelResourceSupport helpers from EMF GenModels
+- Integrates into MWE2 workflows used by downstream JUDO metamodel projects
+- Eclipse Public License 2.0 (EPL-2.0)
+
+## Docs
+
+- [README.md](README.md): Project overview with architecture diagrams
+- [AGENTS.md](AGENTS.md): Comprehensive developer guide with build commands, architecture, template development, and coding conventions
+- [CONTRIBUTING.md](CONTRIBUTING.md): Development setup and contribution guidelines
+- [.github/CIFLOW.md](.github/CIFLOW.md): CI/CD pipeline and branching documentation
+
+## Modules
+
+- [core/](core/): Base generation engine with Guice DI, validation framework, and abstract base classes
+- [builder/](builder/): Builder pattern code generator producing fluent builders per concrete EClass
+- [helper/](helper/): Helper code generator producing stream-based ModelResourceSupport classes
+- [ecore/](ecore/): Self-hosted module that generates builders and helpers for the Ecore metamodel itself
+- [feature/](feature/): Eclipse feature packaging bundling all plugins
+- [site/](site/): Eclipse P2 update site for distribution
+
+## Optional
+
+- [.github/workflows/build.yml](.github/workflows/build.yml): CI/CD build pipeline
+- [.github/workflows/release.yml](.github/workflows/release.yml): Automated release workflow
+- [LICENSE.txt](LICENSE.txt): EPL-2.0 license text
