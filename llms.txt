@@ -27,8 +27,8 @@ Key facts:
 
 ## Used by
 
-- [judo-meta-asm](../../models/judo-meta-asm): models/judo-meta-asm
-- [judo-tatami-core](../../runtime/judo-tatami-core): runtime/judo-tatami-core
+- [judo-meta-asm](../../models/judo-meta-asm): ASM metamodel — Ecore-based architecture model with builders and validation
+- [judo-tatami-core](../../runtime/judo-tatami-core): EMF transformation trace tracking and composable workflow engine
 
 ## Optional
 
